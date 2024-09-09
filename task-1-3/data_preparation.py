@@ -10,9 +10,8 @@ logging.basicConfig(filename=f'task-1-3-log-{datetime.datetime.now()}.txt', leve
                     )
 
 
-def create_err_file(filename: str):
+def create_err_file(filename: str, separators: list):
     logging.debug(f"Начало {create_err_file.__name__}()")
-    separators = [",", ";", "."]
     with open(filename, "w") as f:
         # создадим файл на 10000 записей
         for _ in range(10000):
@@ -37,13 +36,14 @@ def check_lines(read_file, write_file):
                 line = line.strip()
                 logging.debug(line)
                 # заменяем в строке line все вхождения символов, отличных от 0-9,
-                # символа '-' для отрицательных чисел, а также разрешённого разделителя ','
+                # символа '-' для отрицательных чисел,
+                # а также разрешённого разделителя ',' (если он есть)
                 # на разделитель ','
                 line = re.compile(r'[^0-9-,]').sub(",", line)
                 logging.debug(line)
-                # возможно образовались пары разделителей ',,'
+                # возможно образовались подпоследовательности разделителей ', ...,'
                 # заменим их на одно вхождение ','
-                line = re.compile(r'(,,)').sub(",", line)
+                line = re.compile(r'(,+)').sub(",", line)
                 logging.debug(line)
                 # уберём ',' в начале и в конце строки
                 line = re.compile(r'(^,)|(,$)').sub("", line)
@@ -54,11 +54,24 @@ def check_lines(read_file, write_file):
 
 
 def main():
+    """
+        Для некоторого проекта в области машинного обучения используются датасеты,
+    состоящие из последовательностей целых чисел в диапазоне от -100 до 100, разделённых символом ','.
+        При подготовке датасетов были допущены ошибки, в результате которой числа разделены неверно,
+    а именно:
+        - числа могут быть разделены не только символом ',';
+        - между числами могут идти подряд несколько разделителей;
+        - числовые последовательности могут начинаться и оканчиваться разделительными символами.
+    """
     logging.debug(f"Начало {main.__name__}()")
+
     err_file = "err_datasets.txt"
-    create_err_file(err_file)
+    separators = [",", ";", "."]
+    create_err_file(err_file, separators)
+
     norm_datasets = "norm_datasets.txt"
     check_lines(err_file, norm_datasets)
+
     logging.debug(f"Конец {main.__name__}()")
 
 
