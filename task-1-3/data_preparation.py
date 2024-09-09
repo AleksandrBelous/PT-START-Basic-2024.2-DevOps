@@ -1,7 +1,7 @@
 import random
 
 
-def create_rubbished_file(filename: str):
+def create_err_file(filename: str):
     with open(filename, "w") as f:
         for _ in range(10000):
             line_length = random.randint(1, 100)
@@ -13,5 +13,5 @@ def create_rubbished_file(filename: str):
             f.write(line + "\n")
 
 
-rubbished_file = "err_datasets.txt"
-create_rubbished_file(rubbished_file)
+err_file = "err_datasets.txt"
+create_err_file(err_file)
