@@ -5,7 +5,7 @@ import logging
 import datetime
 
 # logging.disable(logging.CRITICAL)
-logging.basicConfig(filename=f'task-1-3-log-{datetime.datetime.now()}.txt', level=logging.DEBUG,
+logging.basicConfig(filename=f'task-1-3-{os.path.basename(__file__)}-log-{datetime.datetime.now()}.txt', level=logging.DEBUG,
                     format=' %(asctime)s - %(levelname)s - %(message)s'
                     )
 
