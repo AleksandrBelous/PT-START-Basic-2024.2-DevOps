@@ -3,3 +3,4 @@
 .venv
 /task-1-3/task-1-3-*
 /task-1-3/.env
+/task-1-3/journalctl.txt
