@@ -59,10 +59,7 @@ def get_days_in_month(month_name):
 
     year = datetime.datetime.now().year
 
-    if calendar.isleap(year):
-        month_days["Feb"] = 29
-    else:
-        month_days["Feb"] = 28
+    month_days["Feb"] = 29 if calendar.isleap(year) else 28
 
     return month_days[month_name]
 
