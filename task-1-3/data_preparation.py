@@ -6,7 +6,7 @@ import logging
 
 logging.disable(logging.CRITICAL)
 
-if logging.getLogger().isEnabledFor(logging.DEBUG):
+if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'task-1-3-{os.path.basename(__file__)}-log-{datetime.datetime.now()}.txt',
                         level=logging.DEBUG,
                         format=' %(asctime)s - %(levelname)s - %(message)s'
