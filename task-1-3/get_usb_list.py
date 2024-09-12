@@ -5,11 +5,13 @@ import datetime
 import calendar
 import logging
 
-logging.disable(logging.CRITICAL)
-logging.basicConfig(filename=f'task-1-3-{os.path.basename(__file__)}-log-{datetime.datetime.now()}.txt',
-                    level=logging.DEBUG,
-                    format=' %(asctime)s - %(levelname)s - %(message)s'
-                    )
+# logging.disable(logging.CRITICAL)
+
+if logging.getLogger().isEnabledFor(logging.DEBUG):
+    logging.basicConfig(filename=f'task-1-3-{os.path.basename(__file__)}-log-{datetime.datetime.now()}.txt',
+                        level=logging.DEBUG,
+                        format=' %(asctime)s - %(levelname)s - %(message)s'
+                        )
 
 from dotenv import load_dotenv
 from pathlib import Path
@@ -82,13 +84,17 @@ def check_usb_devs(read_file, write_file):
                     # сделаем обрезание дня по модулю числа дней в месяце;
                     # в последней пустой группе сохраним строку без указания даты
                     mod = get_days_in_month(month)
+
                     template = re.compile(fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s(.*)')
                     line = template.search(line)
                     month_, day_, line = line.groups()[0], line.groups()[1], line.groups()[-1]
+
                     # найдём строки, которые содержат idVendor и idProduct
                     template = re.compile(r'.*(idVendor)=([0-9a-z]{4}),\s(idProduct)=([0-9a-z]{4})')
                     _, idVendor_, _, idProduct_ = template.search(line).groups()
                     tpl = (month_, day_, idVendor_, idProduct_)
+                    logging.debug(tpl)
+
                     if tpl not in main_info:
                         main_info.add(tpl)
                 except AttributeError:
