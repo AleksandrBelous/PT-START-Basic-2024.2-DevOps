@@ -8,7 +8,6 @@ import logging
 # logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
-    print("logging is available")
     logging.basicConfig(filename=f'task-1-3-{os.path.basename(__file__)}-log-{datetime.datetime.now()}.txt',
                         level=logging.DEBUG,
                         format=' %(asctime)s - %(levelname)s - %(message)s'
@@ -86,8 +85,9 @@ def check_usb_devs(read_file, write_file):
                     # в последней пустой группе сохраним строку без указания даты
                     mod = get_days_in_month(month)
 
-                    template = re.compile(fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s(.*)')
+                    template = re.compile(fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9]{2}:){2}[0-9].*\s(.*)')
                     line = template.search(line)
+                    print(line.groups())
                     month_, day_, line = line.groups()[0], line.groups()[1], line.groups()[-1]
 
                     # найдём строки, которые содержат idVendor и idProduct
