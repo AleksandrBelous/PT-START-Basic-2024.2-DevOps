@@ -85,15 +85,18 @@ def check_usb_devs(read_file, write_file):
                     # в последней пустой группе сохраним строку без указания даты
                     mod = get_days_in_month(month)
 
-                    template = re.compile(fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9]{2}:){2}[0-9].*\s(.*)')
+                    template = re.compile(
+                            fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9:]+)\s(.*)'
+                            )
                     line = template.search(line)
-                    print(line.groups())
-                    month_, day_, line = line.groups()[0], line.groups()[1], line.groups()[-1]
+                    # print(line.groups())
+                    gps = line.groups()
+                    month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
 
                     # найдём строки, которые содержат idVendor и idProduct
                     template = re.compile(r'.*(idVendor)=([0-9a-z]{4}),\s(idProduct)=([0-9a-z]{4})')
                     _, idVendor_, _, idProduct_ = template.search(line).groups()
-                    tpl = (month_, day_, idVendor_, idProduct_)
+                    tpl = (month_, day_, time_, idVendor_, idProduct_)
                     logging.debug(tpl)
 
                     if tpl not in main_info:
@@ -102,8 +105,8 @@ def check_usb_devs(read_file, write_file):
                     continue
 
             if main_info:
-                for tpl in sorted(main_info, key=lambda tpl: tpl[1]):
-                    write_f.write(f"{tpl[0]} {tpl[1]}, {tpl[2]}:{tpl[3]}\n")
+                for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])):
+                    write_f.write(f"{tpl[0]}-{tpl[1]}-{tpl[2]}, {tpl[3]}:{tpl[4]}\n")
 
     logging.debug(f"Конец {check_usb_devs.__name__}()")
 
