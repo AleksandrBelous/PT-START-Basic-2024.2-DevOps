@@ -5,7 +5,7 @@ import datetime
 import calendar
 import logging
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'log-task-1-3-{os.path.basename(__file__)}-{datetime.datetime.now()}.txt',
@@ -18,6 +18,9 @@ from pathlib import Path
 
 
 def create_journalctl_file(filename: str, command: str):
+    """
+    Сохраняет необходимую часть логов из journalctl в файл
+    """
     logging.debug(f"Начало {create_journalctl_file.__name__}()")
 
     dotenv_path = Path('.env')
@@ -29,14 +32,16 @@ def create_journalctl_file(filename: str, command: str):
     password = os.getenv('PASSWORD')
 
     client = paramiko.SSHClient()
+    logging.debug("SSH соединение установлено")
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     client.connect(hostname=host, username=username, password=password, port=int(port))
 
     stdin, stdout, stderr = client.exec_command(command)
     data = stdout.read() + stderr.read()
     client.close()
+    logging.debug("SSH соединение закрыто")
     data = str(data).replace('\\n', '\n').replace('\\t', '\t')[2:-1]
-    # print(data)
+
     with open(filename, "w") as f:
         f.write(data)
 
@@ -44,6 +49,9 @@ def create_journalctl_file(filename: str, command: str):
 
 
 def get_days_in_month(month_name):
+    """
+    Возвращает количество дней в месяце
+    """
     month_days = {
             "Jan": 31,
             "Feb": None,
@@ -67,6 +75,13 @@ def get_days_in_month(month_name):
 
 
 def check_usb_devs(read_file, write_file):
+    """
+    Из сохранённых логов получает:
+    - дату подключения
+    - время подключения
+    - idVendor устройства
+    - idProduct устройства
+    """
     logging.debug(f"Начало {check_usb_devs.__name__}()")
 
     dt = datetime.datetime.now()
@@ -90,7 +105,7 @@ def check_usb_devs(read_file, write_file):
                             fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9:]+)\s(.*)'
                             )
                     line = template.search(line)
-                    # print(line.groups())
+                    logging.debug(line.groups())
                     gps = line.groups()
                     month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
 
@@ -114,6 +129,10 @@ def check_usb_devs(read_file, write_file):
 
 def main():
     """
+    В целях проверки соответствия подключаемых USB-устройств и времени подключения
+    требованиям политик безопасности реализуем скрипт, который будет вытягивать
+    необходимую информацию из journalctl и сохранять полученные данные для дальнейшей
+    проверки через white list или black list.
     """
     logging.debug(f"Начало {main.__name__}()")
     journal = "journalctl.txt"

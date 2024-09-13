@@ -7,3 +7,6 @@
 /task-1-3/usb_devs.txt
 task-1-3/err_datasets.txt
 task-1-3/norm_datasets.txt
+/task-1-3/data_preparation.txt
+/task-1-3/get_usb_list.txt
+/task-1-3/log-*

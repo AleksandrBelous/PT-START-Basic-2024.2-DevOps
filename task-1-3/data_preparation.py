@@ -4,7 +4,7 @@ import re
 import datetime
 import logging
 
-logging.disable(logging.CRITICAL)
+# logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'log-task-1-3-{os.path.basename(__file__)}-{datetime.datetime.now()}.txt',
@@ -14,6 +14,9 @@ if logging.getLogger().isEnabledFor(logging.CRITICAL):
 
 
 def create_err_file(filename: str, separators: list):
+    """
+    Создаёт файл с записями, в которых числа разделены символами из списка separators
+    """
     logging.debug(f"Начало {create_err_file.__name__}()")
     with open(filename, "w") as f:
         # создадим файл на 10000 записей
@@ -32,6 +35,9 @@ def create_err_file(filename: str, separators: list):
 
 
 def check_lines(read_file, write_file):
+    """
+    Проверяет и исправляет строки на валидные
+    """
     logging.debug(f"Начало {check_lines.__name__}()")
     with open(read_file, "r") as read_f:
         with open(write_file, 'w') as write_f:
