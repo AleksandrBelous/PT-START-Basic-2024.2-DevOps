@@ -69,28 +69,19 @@ def check_ip_via_ssh(read_file, write_file):
                 line = line.strip()
                 try:
                     # найдём строки, которые содержат дату текущего месяца,
-                    # а также текущий день, 1 день назад и 2 дня назад;
-                    # сделаем обрезание дня по модулю числа дней в месяце;
-                    # в предпоследней группе сохраним время,
-                    # в последней пустой группе сохраним строку без указания даты
-                    mod = get_days_in_month(month)
-
-                    template = re.compile(
-                            fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9:]+)\s(.*)'
-                            )
+                    #
+                    template = re.compile(fr'^({month})\s({day})\s()')
                     line = template.search(line)
-                    logging.debug(line.groups())
-                    gps = line.groups()
-                    month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
+                    if line:
+                        print(line.groups())
+                        logging.debug(line.groups())
+                        gps = line.groups()
+                        month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
+                        tpl = (month_, day_, time_, )
+                        logging.debug(tpl)
 
-                    # найдём строки, которые содержат idVendor и idProduct
-                    template = re.compile(r'.*(idVendor)=([0-9a-z]{4}),\s(idProduct)=([0-9a-z]{4})')
-                    _, idVendor_, _, idProduct_ = template.search(line).groups()
-                    tpl = (month_, day_, time_, idVendor_, idProduct_)
-                    logging.debug(tpl)
-
-                    if tpl not in main_info:
-                        main_info.add(tpl)
+                        if tpl not in main_info:
+                            main_info.add(tpl)
                 except AttributeError:
                     continue
 
@@ -103,18 +94,18 @@ def check_ip_via_ssh(read_file, write_file):
 
 def main():
     """
-    В целях проверки соответствия подключаемых USB-устройств и времени подключения
+    В целях проверки соответствия подключаемых \/\/\/\/\/ и времени подключения
     требованиям политик безопасности реализуем скрипт, который будет вытягивать
     необходимую информацию из journalctl и сохранять полученные данные для дальнейшей
     проверки через white list или black list.
     """
     logging.debug(f"Начало {main.__name__}()")
-    journal = "journalctl-ssh.txt"
+    log_file = "journalctl-ssh.txt"
 
-    create_journalctl_file(journal, "journalctl -u sshd.service")
+    create_journalctl_file(log_file, "journalctl -u sshd.service")
 
     usd_devs = "ssh_ip_list.txt"
-    check_ip_via_ssh(journal, usd_devs)
+    check_ip_via_ssh(log_file, usd_devs)
 
     logging.debug(f"Конец {main.__name__}()")
 
