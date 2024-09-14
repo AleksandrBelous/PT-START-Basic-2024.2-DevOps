@@ -4,7 +4,7 @@ import re
 import datetime
 import logging
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'log-task-1-3-{os.path.basename(__file__)}-{datetime.datetime.now()}.txt',
@@ -70,14 +70,14 @@ def check_ip_via_ssh(read_file, write_file):
                 try:
                     # найдём строки, которые содержат дату текущего месяца,
                     #
-                    template = re.compile(fr'^({month})\s({day})\s()')
+                    template = re.compile(fr'^({month})\s({day})\s([0-9:]+)\s.*\sfor\s([a-z0-9-_]+)\sfrom\s([0-9:.]+)\sport\s([0-9]+)\s')
                     line = template.search(line)
                     if line:
                         print(line.groups())
                         logging.debug(line.groups())
                         gps = line.groups()
-                        month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
-                        tpl = (month_, day_, time_, )
+                        month_, day_, time_, name_, ip_, port_ = gps
+                        tpl = (month_, day_, time_, name_, ip_, port_)
                         logging.debug(tpl)
 
                         if tpl not in main_info:
@@ -87,14 +87,14 @@ def check_ip_via_ssh(read_file, write_file):
 
             if main_info:
                 for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])):
-                    write_f.write(f"{tpl[0]}-{tpl[1]}-{tpl[2]}, {tpl[3]}:{tpl[4]}\n")
+                    write_f.write(f"{tpl[0]}-{tpl[1]}-{tpl[2]}, {tpl[3]}@{tpl[4]}:{tpl[5]}\n")
 
     logging.debug(f"Конец {check_ip_via_ssh.__name__}()")
 
 
 def main():
     """
-    В целях проверки соответствия подключаемых \/\/\/\/\/ и времени подключения
+    В целях проверки соответствия подключаемых и времени подключения
     требованиям политик безопасности реализуем скрипт, который будет вытягивать
     необходимую информацию из journalctl и сохранять полученные данные для дальнейшей
     проверки через white list или black list.
