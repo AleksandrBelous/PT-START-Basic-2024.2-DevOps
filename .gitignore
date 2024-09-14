@@ -12,3 +12,4 @@ task-1-3/norm_datasets.txt
 /task-1-3/log-*
 /task-1-3/ssh_ip_list.txt
 /task-1-3/journalctl-ssh.txt
+/task-1-3/get_ssh_ip_list.txt
