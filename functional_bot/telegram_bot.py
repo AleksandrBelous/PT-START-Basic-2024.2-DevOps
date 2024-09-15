@@ -278,38 +278,6 @@ class TelegramBot:
         logger.info(f'Stop {self.command_Cancel.__name__}')
         return ConversationHandler.END
 
-    def command_FindPhoneNumbers(self, update: Update, context):
-        """
-        Бот вывод список найденных номеров телефона
-        """
-        logger.info(f'Start {self.command_FindPhoneNumbers.__name__}')
-        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
-                                  reply_markup=self.keyboard_menu_cancel()
-                                  # Кнопка для отмены поиска
-                                  )
-        logger.info(f'Stop {self.command_FindPhoneNumbers.__name__}')
-        return self.commands.findPhoneNumbers.state_point
-
-    def findPhoneNumbers(self, update: Update, context):
-        logger.info(f'Start {self.findPhoneNumbers.__name__}')
-        user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
-
-        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
-
-        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
-
-        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
-            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
-            return  # Завершаем выполнение функции
-
-        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
-        for i in range(len(phoneNumberList)):
-            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
-
-        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
-        logger.info(f'Stop {self.findPhoneNumbers.__name__}')
-        return ConversationHandler.END  # Завершаем работу обработчика диалога
-
     def command_FindEmails(self, update: Update, context):
         """
         Бот вывод список найденных email-адресов
@@ -342,6 +310,70 @@ class TelegramBot:
         logger.info(f'Stop {self.findEmails.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
+    def command_FindPhoneNumbers(self, update: Update, context):
+        """
+        Бот вывод список найденных номеров телефона
+        """
+        logger.info(f'Start {self.command_FindPhoneNumbers.__name__}')
+        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
+                                  reply_markup=self.keyboard_menu_cancel()
+                                  # Кнопка для отмены поиска
+                                  )
+        logger.info(f'Stop {self.command_FindPhoneNumbers.__name__}')
+        return self.commands.findPhoneNumbers.state_point
+
+    def findPhoneNumbers(self, update: Update, context):
+        logger.info(f'Start {self.findPhoneNumbers.__name__}')
+        user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
+
+        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+
+        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
+
+        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
+            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
+            return  # Завершаем выполнение функции
+
+        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
+        for i in range(len(phoneNumberList)):
+            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
+
+        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        logger.info(f'Stop {self.findPhoneNumbers.__name__}')
+        return ConversationHandler.END  # Завершаем работу обработчика диалога
+
+    def command_VerifyPassword(self, update: Update, context):
+        """
+        Бот вывод
+        """
+        logger.info(f'Start {self.command_VerifyPassword.__name__}')
+        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
+                                  reply_markup=self.keyboard_menu_cancel()
+                                  # Кнопка для отмены поиска
+                                  )
+        logger.info(f'Stop {self.command_VerifyPassword.__name__}')
+        return self.commands.findPhoneNumbers.state_point
+
+    def verifyPassword(self, update: Update, context):
+        logger.info(f'Start {self.verifyPassword.__name__}')
+        user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
+
+        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+
+        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
+
+        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
+            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
+            return  # Завершаем выполнение функции
+
+        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
+        for i in range(len(phoneNumberList)):
+            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
+
+        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        logger.info(f'Stop {self.verifyPassword.__name__}')
+        return ConversationHandler.END  # Завершаем работу обработчика диалога
+
     def main(self):
         logger.info(f'Start {self.main.__name__}')
 
@@ -358,8 +390,21 @@ class TelegramBot:
         # Обработчик команды /help
         dp.add_handler(CommandHandler(self.commands.help.command, self.commands.help.callback))
 
-        # Обработчик текстовых сообщений
+        # Обработчик текстовых сообщений /echo
         dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
+
+        # Обработчик команды /findEmails
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.findEmails.state_point,
+                                             self.commands.findEmails.callback
+                                             )],
+                states={
+                        self.commands.findEmails.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.findEmails)],
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
 
         # Обработчик команды /findPhoneNumbers
         dp.add_handler(ConversationHandler(
@@ -373,6 +418,55 @@ class TelegramBot:
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
+
+        # Обработчик команды /verifyPassword
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.verifyPassword.state_point,
+                                             self.commands.verifyPassword.callback
+                                             )],
+                states={
+                        self.commands.verifyPassword.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.verifyPassword)],
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
+
+        # Обработчик команды /get_release
+        dp.add_handler(CommandHandler(self.commands.getRelease.command, self.commands.help.callback))
+
+        # Обработчик команды /get_uname
+        dp.add_handler(CommandHandler(self.commands.getUname.command, self.commands.help.callback))
+
+        # Обработчик команды /get_uptime
+        dp.add_handler(CommandHandler(self.commands.getUptime.command, self.commands.help.callback))
+
+        # Обработчик команды /get_df
+        dp.add_handler(CommandHandler(self.commands.getDF.command, self.commands.help.callback))
+
+        # Обработчик команды /get_free
+        dp.add_handler(CommandHandler(self.commands.getFree.command, self.commands.help.callback))
+
+        # Обработчик команды /get_mpstat
+        dp.add_handler(CommandHandler(self.commands.getMpstat.command, self.commands.help.callback))
+
+        # Обработчик команды /get_w
+        dp.add_handler(CommandHandler(self.commands.getW.command, self.commands.help.callback))
+
+        # Обработчик команды /get_auths
+        dp.add_handler(CommandHandler(self.commands.getAuths.command, self.commands.help.callback))
+
+        # Обработчик команды /get_critical
+        dp.add_handler(CommandHandler(self.commands.getCritical.command, self.commands.help.callback))
+
+        # Обработчик команды /get_ps
+        dp.add_handler(CommandHandler(self.commands.getPS.command, self.commands.help.callback))
+
+        # Обработчик команды /get_SS
+        dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.help.callback))
+
+        # Обработчик команды /get_apt_list
+        dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.help.callback))
 
         # Запускаем бота
         updater.start_polling()
