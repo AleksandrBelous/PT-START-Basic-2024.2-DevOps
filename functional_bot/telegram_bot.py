@@ -198,7 +198,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.7 Сбор информации о запущенных процессах.
-                        'gepPS'           : DotDict(
+                        'getPS'           : DotDict(
                                 {
                                         'command'    : 'get_ps',
                                         'button'     : '/get_ps',
@@ -238,6 +238,20 @@ class TelegramBot:
                 [KeyboardButton(self.commands.start.button)],
                 [KeyboardButton(self.commands.help.button)],
                 [KeyboardButton(self.commands.findPhoneNumbers.button)],
+                [KeyboardButton(self.commands.findEmails.button)],
+                [KeyboardButton(self.commands.verifyPassword.button)],
+                [KeyboardButton(self.commands.getRelease.button)],
+                [KeyboardButton(self.commands.getUname.button)],
+                [KeyboardButton(self.commands.getUptime.button)],
+                [KeyboardButton(self.commands.getDF.button)],
+                [KeyboardButton(self.commands.getFree.button)],
+                [KeyboardButton(self.commands.getMpstat.button)],
+                [KeyboardButton(self.commands.getW.button)],
+                [KeyboardButton(self.commands.getAuths.button)],
+                [KeyboardButton(self.commands.getCritical.button)],
+                [KeyboardButton(self.commands.getPS.button)],
+                [KeyboardButton(self.commands.getSS.button)],
+                [KeyboardButton(self.commands.getAptList.button)],
                 ], resize_keyboard=True
                 )
 
@@ -265,21 +279,22 @@ class TelegramBot:
                     )
         logger.info(f'Stop {self.command_Start.__name__}')
 
+    def command_Cancel(self, update: Update, context):
+        logger.info(f'Start {self.command_Cancel.__name__}')
+        update.message.reply_text('Запрос отменен.', reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Cancel.__name__}')
+        return ConversationHandler.END
+
     def command_Help(self, update: Update, context):
         logger.info(f'Start {self.command_Help.__name__}')
-        update.message.reply_text('Help!', reply_markup=self.keyboard_menu_main())
+        text = ("")
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_Help.__name__}')
 
     def command_Echo(self, update: Update, context):
         logger.info(f'Start {self.command_Echo.__name__}')
         update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_Echo.__name__}')
-
-    def command_Cancel(self, update: Update, context):
-        logger.info(f'Start {self.command_Cancel.__name__}')
-        update.message.reply_text('Запрос отменен.', reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.command_Cancel.__name__}')
-        return ConversationHandler.END
 
     def command_FindEmails(self, update: Update, context):
         """
@@ -377,7 +392,7 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getHostInfo(self, command):
+    def getHostInfo(self, command="uname -a"):
         logger.info(f"Start {self.getHostInfo.__name__}")
 
         host = os.getenv('HOST')
@@ -403,6 +418,78 @@ class TelegramBot:
 
         logger.info(f"Stop {self.getHostInfo.__name__}")
         return data
+
+    def command_GetRelease(self, update: Update, context):
+        logger.info(f'Start {self.command_GetRelease.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetRelease.__name__}')
+
+    def command_GetUptime(self, update: Update, context):
+        logger.info(f'Start {self.command_GetUptime.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetUptime.__name__}')
+
+    def command_GetUname(self, update: Update, context):
+        logger.info(f'Start {self.command_GetUname.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetUname.__name__}')
+
+    def command_GetDF(self, update: Update, context):
+        logger.info(f'Start {self.command_GetDF.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetDF.__name__}')
+
+    def command_GetFree(self, update: Update, context):
+        logger.info(f'Start {self.command_GetFree.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetFree.__name__}')
+
+    def command_GetMpstat(self, update: Update, context):
+        logger.info(f'Start {self.command_GetMpstat.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetMpstat.__name__}')
+
+    def command_GetW(self, update: Update, context):
+        logger.info(f'Start {self.command_GetW.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetW.__name__}')
+
+    def command_GetAuths(self, update: Update, context):
+        logger.info(f'Start {self.command_GetAuths.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetAuths.__name__}')
+
+    def command_GetCritical(self, update: Update, context):
+        logger.info(f'Start {self.command_GetCritical.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetCritical.__name__}')
+
+    def command_GetPS(self, update: Update, context):
+        logger.info(f'Start {self.command_GetPS.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetPS.__name__}')
+
+    def command_GetSS(self, update: Update, context):
+        logger.info(f'Start {self.command_GetSS.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetSS.__name__}')
+
+    def command_GetAptList(self, update: Update, context):
+        logger.info(f'Start {self.command_GetAptList.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def main(self):
         logger.info(f'Start {self.main.__name__}')
@@ -463,40 +550,40 @@ class TelegramBot:
                 )
 
         # Обработчик команды /get_release
-        dp.add_handler(CommandHandler(self.commands.getRelease.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getRelease.command, self.commands.getRelease.callback))
 
         # Обработчик команды /get_uname
-        dp.add_handler(CommandHandler(self.commands.getUname.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getUname.command, self.commands.getUname.callback))
 
         # Обработчик команды /get_uptime
-        dp.add_handler(CommandHandler(self.commands.getUptime.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getUptime.command, self.commands.getUptime.callback))
 
         # Обработчик команды /get_df
-        dp.add_handler(CommandHandler(self.commands.getDF.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getDF.command, self.commands.getDF.callback))
 
         # Обработчик команды /get_free
-        dp.add_handler(CommandHandler(self.commands.getFree.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getFree.command, self.commands.getFree.callback))
 
         # Обработчик команды /get_mpstat
-        dp.add_handler(CommandHandler(self.commands.getMpstat.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getMpstat.command, self.commands.getMpstat.callback))
 
         # Обработчик команды /get_w
-        dp.add_handler(CommandHandler(self.commands.getW.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getW.command, self.commands.getW.callback))
 
         # Обработчик команды /get_auths
-        dp.add_handler(CommandHandler(self.commands.getAuths.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getAuths.command, self.commands.getAuths.callback))
 
         # Обработчик команды /get_critical
-        dp.add_handler(CommandHandler(self.commands.getCritical.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getCritical.command, self.commands.getCritical.callback))
 
         # Обработчик команды /get_ps
-        dp.add_handler(CommandHandler(self.commands.getPS.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getPS.command, self.commands.getPS.callback))
 
         # Обработчик команды /get_SS
-        dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.getSS.callback))
 
         # Обработчик команды /get_apt_list
-        dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.help.callback))
+        dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
 
         # Запускаем бота
         updater.start_polling()
