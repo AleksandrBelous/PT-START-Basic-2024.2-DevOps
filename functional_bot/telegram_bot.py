@@ -4,7 +4,7 @@ import os
 import datetime
 import logging
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'log-telegram-bot-{os.path.basename(__file__)}-{datetime.datetime.now()}.txt',

@@ -4,3 +4,5 @@
 /*/.env
 /task-1-3/*.txt
 /task-1-3/log-*
+/functional_bot/log-*
+/functional_bot/*.txt
