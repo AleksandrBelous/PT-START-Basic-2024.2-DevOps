@@ -29,11 +29,15 @@ class DotDict(dict):
 
 class TelegramBot:
     def __init__(self):
+        logger.info(f'Start {self.__init__.__name__}')
         dotenv_path = Path('.env')
         load_dotenv(dotenv_path=dotenv_path)
 
         self.tm_token__ = os.getenv('TM_TOKEN')
+        logger.info('Get TM_TOKEN')
         self.chat_id = os.getenv('CHAT_ID')
+        logger.info('Get CHAT_ID')
+
         self.commands = DotDict(
                 {
                         'start'           : DotDict(
@@ -78,9 +82,11 @@ class TelegramBot:
                                 ),
                         },
                 )
+        logger.info(f'Stop {self.__init__.__name__}')
 
     # Функция для создания кнопок
     def keyboard_menu_main(self):
+        logger.info(f'Start {self.keyboard_menu_main.__name__}')
         return ReplyKeyboardMarkup([
                 [KeyboardButton(self.commands.start.button)],
                 [KeyboardButton(self.commands.help.button)],
@@ -89,12 +95,14 @@ class TelegramBot:
                 )
 
     def keyboard_menu_cancel(self):
+        logger.info(f'Start {self.keyboard_menu_cancel.__name__}')
         return ReplyKeyboardMarkup([
                 [KeyboardButton(self.commands.cancel.button)],
                 ], resize_keyboard=True
                 )
 
     def command_Start(self, update: Update = None, context=None):
+        logger.info(f'Start {self.command_Start.__name__}')
         if update:
             user = update.effective_user
             update.message.reply_text(
@@ -107,24 +115,31 @@ class TelegramBot:
                     text="Бот запущен! Вот ваша стартовая кнопка:",
                     reply_markup=self.keyboard_menu_main()
                     )
+        logger.info(f'Stop {self.command_Start.__name__}')
 
     def command_Help(self, update: Update, context):
+        logger.info(f'Start {self.command_Help.__name__}')
         update.message.reply_text('Help!', reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Help.__name__}')
 
     def command_FindPhoneNumbers(self, update: Update, context):
+        logger.info(f'Start {self.command_FindPhoneNumbers.__name__}')
         update.message.reply_text('Введите текст для поиска телефонных номеров: ',
                                   # reply_markup=self.main_menu_keyboard()
                                   reply_markup=self.keyboard_menu_cancel()
                                   # Кнопка для отмены поиска
                                   )
-
+        logger.info(f'Stop {self.command_FindPhoneNumbers.__name__}')
         return self.commands.findPhoneNumbers.state_point
 
     def command_Cancel(self, update: Update, context):
+        logger.info(f'Start {self.command_Cancel.__name__}')
         update.message.reply_text('Запрос отменен.', reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Cancel.__name__}')
         return ConversationHandler.END
 
     def findPhoneNumbers(self, update: Update, context):
+        logger.info(f'Start {self.findPhoneNumbers.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
 
         phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
@@ -140,20 +155,22 @@ class TelegramBot:
             phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
 
         update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def command_Echo(self, update: Update, context):
-        logger.debug(f'start {self.command_Echo.__name__}')
-        # print('in echo')
+        logger.info(f'Start {self.command_Echo.__name__}')
         update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Echo.__name__}')
 
     def main(self):
+        logger.info(f'Start {self.main.__name__}')
         updater = Updater(self.tm_token__, use_context=True)
 
         # Получаем диспетчер для регистрации обработчиков
         dp = updater.dispatcher
 
-        # Регистрируем обработчики команд
+        ### Регистрируем обработчики команд ###
 
         # Обработчик команды /start
         dp.add_handler(CommandHandler(self.commands.start.command, self.commands.start.callback))
@@ -183,8 +200,11 @@ class TelegramBot:
 
         # Останавливаем бота при нажатии Ctrl+C
         updater.idle()
+        logger.info(f'Stop {self.main.__name__}')
 
 
 if __name__ == '__main__':
+    logger.info('Start Script')
     bot = TelegramBot()
     bot.main()
+    logger.info('Stop Script')
