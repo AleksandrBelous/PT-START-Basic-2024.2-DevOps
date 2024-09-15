@@ -301,7 +301,7 @@ class TelegramBot:
         Бот вывод список найденных email-адресов
         """
         logger.info(f'Start {self.command_FindEmails.__name__}')
-        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
+        update.message.reply_text('Введите текст для поиска email-адресов: ',
                                   reply_markup=self.keyboard_menu_cancel()
                                   # Кнопка для отмены поиска
                                   )
@@ -310,21 +310,20 @@ class TelegramBot:
 
     def findEmails(self, update: Update, context):
         logger.info(f'Start {self.findEmails.__name__}')
-        user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
+        user_input = update.message.text  # Получаем текст, содержащий (или нет) email-адреса
 
-        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+        emailsRegex = re.compile(r'')  # формат email-адресов
 
-        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
+        emailsList = emailsRegex.findall(user_input)  # Ищем номера телефонов
 
-        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
-            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
+        if not emailsList:  # Обрабатываем случай, когда номеров телефонов нет
+            update.message.reply_text('Email-адреса не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
-        for i in range(len(phoneNumberList)):
-            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
+        emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
 
-        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        update.message.reply_text(emails)  # Отправляем сообщение пользователю
+
         logger.info(f'Stop {self.findEmails.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
@@ -344,7 +343,16 @@ class TelegramBot:
         logger.info(f'Start {self.findPhoneNumbers.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
 
-        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+        """
+        Различные варианты записи номеров телефона.
+        - 8XXXXXXXXXX,
+        - 8(XXX)XXXXXXX,
+        - 8 XXX XXX XX XX,
+        - 8 (XXX) XXX XX XX,
+        - 8-XXX-XXX-XX-XX.
+        Также вместо ‘8’ на первом месте может быть ‘+7’.
+        """
+        phoneNumRegex = re.compile(r'')  # формат
 
         phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
 
@@ -352,11 +360,10 @@ class TelegramBot:
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
-        for i in range(len(phoneNumberList)):
-            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
+        phoneNumbers = ''.join([f'{i + 1}. {phoneNumberList[i]}' for i in range(len(phoneNumberList))])
 
         update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
@@ -376,19 +383,23 @@ class TelegramBot:
         logger.info(f'Start {self.verifyPassword.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
 
-        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+        """
+        Требования к паролю:
+        - Пароль должен содержать не менее восьми символов.
+        - Пароль должен включать как минимум одну заглавную букву (A–Z).
+        - Пароль должен включать хотя бы одну строчную букву (a–z).
+        - Пароль должен включать хотя бы одну цифру (0–9).
+        - Пароль должен включать хотя бы один специальный символ, такой как !@#$%^&*().
+        """
+        passwdRegex = re.compile(r'')
 
-        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
+        phoneNumberList = passwdRegex.findall(user_input)
 
-        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
-            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
+        if not phoneNumberList:  # Обрабатываем случай, когда совпадений нет
+            update.message.reply_text('Пароль простой', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
-        for i in range(len(phoneNumberList)):
-            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
-
-        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        update.message.reply_text('Пароль сложный')  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
