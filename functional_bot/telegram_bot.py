@@ -267,6 +267,11 @@ class TelegramBot:
         update.message.reply_text('Help!', reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_Help.__name__}')
 
+    def command_Echo(self, update: Update, context):
+        logger.info(f'Start {self.command_Echo.__name__}')
+        update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Echo.__name__}')
+
     def command_Cancel(self, update: Update, context):
         logger.info(f'Start {self.command_Cancel.__name__}')
         update.message.reply_text('Запрос отменен.', reply_markup=self.keyboard_menu_main())
@@ -274,6 +279,9 @@ class TelegramBot:
         return ConversationHandler.END
 
     def command_FindPhoneNumbers(self, update: Update, context):
+        """
+        Бот вывод список найденных номеров телефона
+        """
         logger.info(f'Start {self.command_FindPhoneNumbers.__name__}')
         update.message.reply_text('Введите текст для поиска телефонных номеров: ',
                                   reply_markup=self.keyboard_menu_cancel()
@@ -283,9 +291,6 @@ class TelegramBot:
         return self.commands.findPhoneNumbers.state_point
 
     def findPhoneNumbers(self, update: Update, context):
-        """
-        Бот вывод список найденных номеров телефона или email-адресов
-        """
         logger.info(f'Start {self.findPhoneNumbers.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
 
@@ -305,10 +310,37 @@ class TelegramBot:
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def command_Echo(self, update: Update, context):
-        logger.info(f'Start {self.command_Echo.__name__}')
-        update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.command_Echo.__name__}')
+    def command_FindEmails(self, update: Update, context):
+        """
+        Бот вывод список найденных email-адресов
+        """
+        logger.info(f'Start {self.command_FindEmails.__name__}')
+        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
+                                  reply_markup=self.keyboard_menu_cancel()
+                                  # Кнопка для отмены поиска
+                                  )
+        logger.info(f'Stop {self.command_FindEmails.__name__}')
+        return self.commands.findEmails.state_point
+
+    def findEmails(self, update: Update, context):
+        logger.info(f'Start {self.findEmails.__name__}')
+        user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
+
+        phoneNumRegex = re.compile(r'8 \(\d{3}\) \d{3}-\d{2}-\d{2}')  # формат 8 (000) 000-00-00
+
+        phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
+
+        if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
+            update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
+            return  # Завершаем выполнение функции
+
+        phoneNumbers = ''  # Создаем строку, в которую будем записывать номера телефонов
+        for i in range(len(phoneNumberList)):
+            phoneNumbers += f'{i + 1}. {phoneNumberList[i]}\n'  # Записываем очередной номер
+
+        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        logger.info(f'Stop {self.findEmails.__name__}')
+        return ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def main(self):
         logger.info(f'Start {self.main.__name__}')
@@ -322,8 +354,13 @@ class TelegramBot:
 
         # Обработчик команды /start
         dp.add_handler(CommandHandler(self.commands.start.command, self.commands.start.callback))
+
         # Обработчик команды /help
         dp.add_handler(CommandHandler(self.commands.help.command, self.commands.help.callback))
+
+        # Обработчик текстовых сообщений
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
+
         # Обработчик команды /findPhoneNumbers
         dp.add_handler(ConversationHandler(
                 entry_points=[CommandHandler(self.commands.findPhoneNumbers.state_point,
@@ -337,13 +374,10 @@ class TelegramBot:
                 )
                 )
 
-        # Регистрируем обработчик текстовых сообщений
-        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
-
         # Запускаем бота
         updater.start_polling()
 
-        # Отправляем кнопку автоматически при запуске бота
+        # Отправляем кнопку /start автоматически при запуске бота
         self.command_Start(context=updater)
 
         # Останавливаем бота при нажатии Ctrl+C
