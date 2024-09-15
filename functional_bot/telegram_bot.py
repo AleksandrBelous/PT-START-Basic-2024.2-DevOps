@@ -13,6 +13,7 @@ if logging.getLogger().isEnabledFor(logging.CRITICAL):
 
 logger = logging.getLogger(__name__)
 
+import paramiko
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -35,6 +36,7 @@ class TelegramBot:
 
         self.tm_token__ = os.getenv('TM_TOKEN')
         logger.info('Get TM_TOKEN')
+
         self.chat_id = os.getenv('CHAT_ID')
         logger.info('Get CHAT_ID')
 
@@ -226,6 +228,7 @@ class TelegramBot:
                                 ),
                         },
                 )
+
         logger.info(f'Stop {self.__init__.__name__}')
 
     # Функция для создания кнопок основных запросов
@@ -373,6 +376,33 @@ class TelegramBot:
         update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return ConversationHandler.END  # Завершаем работу обработчика диалога
+
+    def getHostInfo(self, command):
+        logger.info(f"Start {self.getHostInfo.__name__}")
+
+        host = os.getenv('HOST')
+        logger.info('Get HOST')
+
+        port = os.getenv('PORT')
+        logger.info('Get PORT')
+
+        username = os.getenv('USER')
+        logger.info('Get USER')
+
+        password = os.getenv('PASSWORD')
+        logger.info('Get PASSWORD')
+
+        client = paramiko.SSHClient()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.connect(hostname=host, username=username, password=password, port=int(port))
+
+        stdin, stdout, stderr = client.exec_command(command)
+        data = stdout.read() + stderr.read()
+        client.close()
+        data = str(data).replace('\\n', '\n').replace('\\t', '\t')[2:-1]
+
+        logger.info(f"Stop {self.getHostInfo.__name__}")
+        return data
 
     def main(self):
         logger.info(f'Start {self.main.__name__}')
