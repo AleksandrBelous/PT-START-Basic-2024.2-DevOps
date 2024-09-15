@@ -1,15 +1,6 @@
 .gitignore
 .idea
 .venv
-/task-1-3/task-1-3-*
-/task-1-3/.env
-/task-1-3/journalctl.txt
-/task-1-3/usb_devs.txt
-task-1-3/err_datasets.txt
-task-1-3/norm_datasets.txt
-/task-1-3/data_preparation.txt
-/task-1-3/get_usb_list.txt
+/*/.env
+/task-1-3/*.txt
 /task-1-3/log-*
-/task-1-3/ssh_ip_list.txt
-/task-1-3/journalctl-ssh.txt
-/task-1-3/get_ssh_ip_list.txt
