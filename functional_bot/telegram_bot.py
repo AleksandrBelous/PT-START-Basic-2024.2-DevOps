@@ -226,7 +226,16 @@ class TelegramBot:
                                         'callback'   : self.command_GetAptList,
                                         }
                                 ),
-                        },
+                        ## 3.10 Сбор информации о запущенных сервисах.
+                        'getServices'     : DotDict(
+                                {
+                                        'command'    : 'get_services',
+                                        'button'     : '/get_services',
+                                        'state_point': 'get_services',
+                                        'callback'   : self.command_GetServices,
+                                        },
+                                ),
+                        }
                 )
 
         logger.info(f'Stop {self.__init__.__name__}')
@@ -237,8 +246,8 @@ class TelegramBot:
         return ReplyKeyboardMarkup([
                 [KeyboardButton(self.commands.start.button)],
                 [KeyboardButton(self.commands.help.button)],
-                [KeyboardButton(self.commands.findPhoneNumbers.button)],
                 [KeyboardButton(self.commands.findEmails.button)],
+                [KeyboardButton(self.commands.findPhoneNumbers.button)],
                 [KeyboardButton(self.commands.verifyPassword.button)],
                 [KeyboardButton(self.commands.getRelease.button)],
                 [KeyboardButton(self.commands.getUname.button)],
@@ -252,6 +261,7 @@ class TelegramBot:
                 [KeyboardButton(self.commands.getPS.button)],
                 [KeyboardButton(self.commands.getSS.button)],
                 [KeyboardButton(self.commands.getAptList.button)],
+                [KeyboardButton(self.commands.getServices.button)],
                 ], resize_keyboard=True
                 )
 
@@ -287,14 +297,74 @@ class TelegramBot:
 
     def command_Help(self, update: Update, context):
         logger.info(f'Start {self.command_Help.__name__}')
-        text = ("")
+
+        text = (
+                "В боте должен быть реализован функционал поиска необходимой информации и вывод ее пользователю. Поиск должен быть реализован с помощью регулярных выражений. "
+                "Информация, которую бот должен уметь выделять из текста:"
+                "а) Email-адреса."
+                "Команда: /find_email"
+                "б) Номера телефонов."
+                "Команда: /find_phone_number"
+                "❗ Стоит учесть различные варианты записи номеров телефона. 8XXXXXXXXXX, 8(XXX)XXXXXXX, 8 XXX XXX XX XX, 8 (XXX) XXX XX XX, 8-XXX-XXX-XX-XX. Также вместо ‘8’ на первом месте может быть ‘+7’."
+                "Взаимодействия с этими командами происходит по следующему принципу:"
+                "Пользователь выбирает команду"
+                "Бот запрашивает текст"
+                "Пользователь отправляет текст"
+                "Бот вывод список найденных номеров телефона или email-адресов."
+                "❗ Важно! Если номера телефонов или email-адреса найдены не были, необходимо сообщить об этом пользователю."
+                "2. Проверка сложности пароля регулярным выражением."
+                "В боте должен быть реализован функционал проверки сложности пароль с использованием регулярного выражения."
+                "Команда: /verify_password"
+                "Требования к паролю:"
+                "Пароль должен содержать не менее восьми символов."
+                "Пароль должен включать как минимум одну заглавную букву (A–Z)."
+                "Пароль должен включать хотя бы одну строчную букву (a–z)."
+                "Пароль должен включать хотя бы одну цифру (0–9)."
+                "Пароль должен включать хотя бы один специальный символ, такой как !@#$%^&*()."
+                "Взаимодействие с этой командой происходит по следующему принципу:"
+                "Пользователь выбирает команду"
+                "Бот запрашивает пароль"
+                "Пользователь отправляет пароль"
+                "Бот отвечает: ‘Пароль простой’ или ‘Пароль сложный’."
+                "3. Мониторинг Linux-системы"
+                "Бот должен реализовывать функционал для мониторинга Linux системы. Для этого будет устанавливаться SSH-подключение к удаленному серверу (в его роли может выступать собственная виртуальная машина, эта машина не должна участвовать в развертывании проекта), с помощью которого будет собираться метрики с системы. Мониторинг должен включать в себя следующий показатели:"
+                "3.1 Сбор информации о системе:"
+                "3.1.1 О релизе."
+                "Команда: /get_release"
+                "3.1.2 Об архитектуры процессора, имени хоста системы и версии ядра."
+                "Команда: /get_uname"
+                "3.1.3 О времени работы."
+                "Команда: /get_uptime"
+                "3.2 Сбор информации о состоянии файловой системы."
+                "Команда: /get_df"
+                "3.3 Сбор информации о состоянии оперативной памяти."
+                "Команда: /get_free"
+                "3.4 Сбор информации о производительности системы."
+                "Команда: /get_mpstat"
+                "3.5 Сбор информации о работающих в данной системе пользователях."
+                "Команда: /get_w"
+                "3.6 Сбор логов"
+                "3.6.1 Последние 10 входов в систему."
+                "Команда: /get_auths"
+                "3.6.2 Последние 5 критических события."
+                "Команда: /get_critical"
+                "3.7 Сбор информации о запущенных процессах."
+                "Команда: /get_ps"
+                "3.8 Сбор информации об используемых портах."
+                "Команда: /get_ss"
+                "3.9 Сбор информации об установленных пакетах."
+                "Команда: /get_apt_list"
+                "❗ Стоит учесть два варианта взаимодействия с этой командой:"
+                "Вывод всех пакетов;"
+                "Поиск информации о пакете, название которого будет запрошено у пользователя. "
+                "3.10 Сбор информации о запущенных сервисах."
+                "Команда: /get_services"
+                "Взаимодействия с этими командами происходит по следующему принципу:"
+                "Пользователь выбирает команду"
+                "Бот отправляет соответствующую информацию")
+
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_Help.__name__}')
-
-    def command_Echo(self, update: Update, context):
-        logger.info(f'Start {self.command_Echo.__name__}')
-        update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.command_Echo.__name__}')
 
     def command_FindEmails(self, update: Update, context):
         """
@@ -325,7 +395,7 @@ class TelegramBot:
         update.message.reply_text(emails)  # Отправляем сообщение пользователю
 
         logger.info(f'Stop {self.findEmails.__name__}')
-        return ConversationHandler.END  # Завершаем работу обработчика диалога
+        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def command_FindPhoneNumbers(self, update: Update, context):
         """
@@ -342,7 +412,6 @@ class TelegramBot:
     def findPhoneNumbers(self, update: Update, context):
         logger.info(f'Start {self.findPhoneNumbers.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) номера телефонов
-
         """
         Различные варианты записи номеров телефона.
         - 8XXXXXXXXXX,
@@ -352,7 +421,7 @@ class TelegramBot:
         - 8-XXX-XXX-XX-XX.
         Также вместо ‘8’ на первом месте может быть ‘+7’.
         """
-        phoneNumRegex = re.compile(r'')  # формат
+        phoneNumRegex = re.compile(r'(\+7|8)(\s?[(-]?\d{3}[)-]?\s?\d{3}-?\s?\d{2}-?\s?\d{2})')  # формат
 
         phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
 
@@ -360,16 +429,17 @@ class TelegramBot:
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        phoneNumbers = ''.join([f'{i + 1}. {phoneNumberList[i]}' for i in range(len(phoneNumberList))])
+        phoneNumbers = '\n'.join([f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))])
 
-        update.message.reply_text(phoneNumbers)  # Отправляем сообщение пользователю
+        update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_menu_cancel()
+                                  )  # Отправляем сообщение пользователю
 
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
-        return ConversationHandler.END  # Завершаем работу обработчика диалога
+        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def command_VerifyPassword(self, update: Update, context):
         """
-        Бот вывод
+        Бот выводит информацию о сложности пароля
         """
         logger.info(f'Start {self.command_VerifyPassword.__name__}')
         update.message.reply_text('Введите текст для поиска телефонных номеров: ',
@@ -391,17 +461,18 @@ class TelegramBot:
         - Пароль должен включать хотя бы одну цифру (0–9).
         - Пароль должен включать хотя бы один специальный символ, такой как !@#$%^&*().
         """
-        passwdRegex = re.compile(r'')
 
-        phoneNumberList = passwdRegex.findall(user_input)
+        passwdRegex = re.compile(r'(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}')
 
-        if not phoneNumberList:  # Обрабатываем случай, когда совпадений нет
+        passwdList = passwdRegex.findall(user_input)
+
+        if not passwdList:  # Обрабатываем случай, когда совпадений нет
             update.message.reply_text('Пароль простой', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
         update.message.reply_text('Пароль сложный')  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.verifyPassword.__name__}')
-        return ConversationHandler.END  # Завершаем работу обработчика диалога
+        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def getHostInfo(self, command="uname -a"):
         logger.info(f"Start {self.getHostInfo.__name__}")
@@ -502,6 +573,17 @@ class TelegramBot:
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
+    def command_GetServices(self, update: Update, context):
+        logger.info(f'Start {self.command_GetServices.__name__}')
+        text = self.getHostInfo()
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetServices.__name__}')
+
+    def command_Echo(self, update: Update, context):
+        logger.info(f'Start {self.command_Echo.__name__}')
+        update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Echo.__name__}')
+
     def main(self):
         logger.info(f'Start {self.main.__name__}')
 
@@ -517,9 +599,6 @@ class TelegramBot:
 
         # Обработчик команды /help
         dp.add_handler(CommandHandler(self.commands.help.command, self.commands.help.callback))
-
-        # Обработчик текстовых сообщений /echo
-        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
 
         # Обработчик команды /findEmails
         dp.add_handler(ConversationHandler(
@@ -595,6 +674,12 @@ class TelegramBot:
 
         # Обработчик команды /get_apt_list
         dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
+
+        # Обработчик команды /get_services
+        dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
+
+        # Обработчик текстовых сообщений /echo
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
 
         # Запускаем бота
         updater.start_polling()
