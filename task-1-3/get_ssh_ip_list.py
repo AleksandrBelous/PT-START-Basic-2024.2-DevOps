@@ -100,7 +100,7 @@ def main():
     logging.debug(f"Начало {main.__name__}()")
     log_file = "journalctl-ssh.txt"
 
-    create_journalctl_file(log_file, "journalctl -u sshd.service")
+    create_journalctl_file(log_file, "journalctl | grep sshd")
 
     usd_devs = "ssh_ip_list.txt"
     check_ip_via_ssh(log_file, usd_devs)
