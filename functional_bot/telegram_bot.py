@@ -382,7 +382,7 @@ class TelegramBot:
         logger.info(f'Start {self.findEmails.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) email-адреса
 
-        emailsRegex = re.compile(r'')  # формат email-адресов
+        emailsRegex = re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}')  # формат email-адресов
 
         emailsList = emailsRegex.findall(user_input)  # Ищем номера телефонов
 
@@ -392,7 +392,7 @@ class TelegramBot:
 
         emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
 
-        update.message.reply_text(emails)  # Отправляем сообщение пользователю
+        update.message.reply_text(emails, reply_markup=self.keyboard_menu_cancel())  # Отправляем сообщение пользователю
 
         logger.info(f'Stop {self.findEmails.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
@@ -429,7 +429,9 @@ class TelegramBot:
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        phoneNumbers = '\n'.join([f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))])
+        phoneNumbers = '\n'.join(
+                [f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
+                )
 
         update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_menu_cancel()
                                   )  # Отправляем сообщение пользователю
@@ -470,7 +472,8 @@ class TelegramBot:
             update.message.reply_text('Пароль простой', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
 
-        update.message.reply_text('Пароль сложный')  # Отправляем сообщение пользователю
+        update.message.reply_text('Пароль сложный', reply_markup=self.keyboard_menu_cancel()
+                                  )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
