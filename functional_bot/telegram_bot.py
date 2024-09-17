@@ -444,12 +444,12 @@ class TelegramBot:
         Бот выводит информацию о сложности пароля
         """
         logger.info(f'Start {self.command_VerifyPassword.__name__}')
-        update.message.reply_text('Введите текст для поиска телефонных номеров: ',
+        update.message.reply_text('Введите пароль для оценки сложности: ',
                                   reply_markup=self.keyboard_menu_cancel()
                                   # Кнопка для отмены поиска
                                   )
         logger.info(f'Stop {self.command_VerifyPassword.__name__}')
-        return self.commands.findPhoneNumbers.state_point
+        return self.commands.verifyPassword.state_point
 
     def verifyPassword(self, update: Update, context):
         logger.info(f'Start {self.verifyPassword.__name__}')
@@ -466,7 +466,7 @@ class TelegramBot:
 
         passwdRegex = re.compile(r'(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}')
 
-        passwdList = passwdRegex.findall(user_input)
+        passwdList = passwdRegex.search(user_input)
 
         if not passwdList:  # Обрабатываем случай, когда совпадений нет
             update.message.reply_text('Пароль простой', reply_markup=self.keyboard_menu_cancel())
