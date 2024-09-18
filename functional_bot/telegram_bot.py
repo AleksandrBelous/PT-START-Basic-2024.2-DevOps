@@ -575,7 +575,11 @@ class TelegramBot:
 
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
-        text = self.getHostInfo("tail -n 5 /var/log/syslog")
+        text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
+
+        text = re.sub(r'nautilus', r'sevsu', text[-1])
+        text = text.split('\n')
+
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -584,11 +588,9 @@ class TelegramBot:
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
         text = self.getHostInfo("ps aux")
-
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
-
         logger.info(f'Stop {self.command_GetPS.__name__}')
 
     def command_GetSS(self, update: Update, context):
