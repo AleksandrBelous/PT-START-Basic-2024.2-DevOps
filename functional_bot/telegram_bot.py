@@ -17,7 +17,7 @@ import paramiko
 from dotenv import load_dotenv
 from pathlib import Path
 
-from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton
+from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 from telegram.error import BadRequest
 
@@ -244,6 +244,7 @@ class TelegramBot:
     # Функция для создания кнопок основных запросов
     def keyboard_menu_main(self):
         logger.info(f'Start {self.keyboard_menu_main.__name__}')
+
         return ReplyKeyboardMarkup([
                 [KeyboardButton(self.commands.start.button)],
                 [KeyboardButton(self.commands.help.button)],
@@ -478,8 +479,8 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getStrHostInfo(self, command="uname -a"):
-        logger.info(f"Start {self.getStrHostInfo.__name__}")
+    def getHostInfo(self, command="uname -a"):
+        logger.info(f"Start {self.getHostInfo.__name__}")
 
         host = os.getenv('HOST')
         logger.info('Get HOST')
@@ -502,87 +503,65 @@ class TelegramBot:
         client.close()
         data = str(data).replace('\\n', '\n').replace('\\t', '\t')[2:-1]
 
-        logger.info(f"Stop {self.getStrHostInfo.__name__}")
+        logger.info(f"Stop {self.getHostInfo.__name__}")
         return data
 
-    def getListHostInfo(self, command="uname -a"):
-        data = self.getStrHostInfo(command)
-
-        # Максимальная длина сообщения в Telegram
-        max_length = 4096
-        # Разбиваем сообщение на части
-        parts = [data[i:i + max_length] for i in range(0, len(data), max_length)]
-
-        logger.info(f"Stop {self.getListHostInfo.__name__}")
-        return parts
+    def command_Generic(self, update: Update, context, command):
+        logger.info(f'Start {self.command_Generic} | {command}')
+        data = self.getHostInfo(command)
+        try:
+            update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
+        except BadRequest as e:
+            max_length = 4096
+            parts = [data[i:i + max_length] for i in range(0, len(data), max_length)]
+            for part in parts[:-1:]:
+                update.message.reply_text(part)
+            update.message.reply_text(parts[-1], reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_Generic}')
 
     def command_GetRelease(self, update: Update, context):
         logger.info(f'Start {self.command_GetRelease.__name__}')
-        text = self.getListHostInfo("lsb_release -a")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "lsb_release -a")
         logger.info(f'Stop {self.command_GetRelease.__name__}')
 
     def command_GetUname(self, update: Update, context):
         logger.info(f'Start {self.command_GetUname.__name__}')
-        text = self.getListHostInfo("uname -nmr")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "uname -nmr")
         logger.info(f'Stop {self.command_GetUname.__name__}')
 
     def command_GetUptime(self, update: Update, context):
         logger.info(f'Start {self.command_GetUptime.__name__}')
-        text = self.getListHostInfo("uptime")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "uptime")
         logger.info(f'Stop {self.command_GetUptime.__name__}')
 
     def command_GetDF(self, update: Update, context):
         logger.info(f'Start {self.command_GetDF.__name__}')
-        text = self.getListHostInfo("df -h")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "df -h")
         logger.info(f'Stop {self.command_GetDF.__name__}')
 
     def command_GetFree(self, update: Update, context):
         logger.info(f'Start {self.command_GetFree.__name__}')
-        text = self.getListHostInfo("free -h")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "free -h")
         logger.info(f'Stop {self.command_GetFree.__name__}')
 
     def command_GetMpstat(self, update: Update, context):
         logger.info(f'Start {self.command_GetMpstat.__name__}')
-        text = self.getListHostInfo("mpstat -P ALL 1 1")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "mpstat -P ALL 1 1")
         logger.info(f'Stop {self.command_GetMpstat.__name__}')
 
     def command_GetW(self, update: Update, context):
         logger.info(f'Start {self.command_GetW.__name__}')
-        text = self.getListHostInfo("w")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "w")
         logger.info(f'Stop {self.command_GetW.__name__}')
 
     def command_GetAuths(self, update: Update, context):
         logger.info(f'Start {self.command_GetAuths.__name__}')
-        text = self.getListHostInfo("last -n 10")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "last -n 10")
         logger.info(f'Stop {self.command_GetAuths.__name__}')
 
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
-        text = self.getListHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
+        text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
 
         text = re.sub(r'nautilus', r'sevsu', text[-1])
         text = text.split('\n')
@@ -594,24 +573,18 @@ class TelegramBot:
 
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
-        text = self.getListHostInfo("ps aux")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "ps aux")
         logger.info(f'Stop {self.command_GetPS.__name__}')
 
     def command_GetSS(self, update: Update, context):
         logger.info(f'Start {self.command_GetSS.__name__}')
-        text = self.getListHostInfo("ss -tuln")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "ss -tuln")
         logger.info(f'Stop {self.command_GetSS.__name__}')
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-        text = self.getStrHostInfo("dpkg -l | cat")
-        # print(text)
+        text = self.getHostInfo("dpkg -l | cat")
+        print(text)
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
         print(text)
         # dpkg -s <название_пакета>
@@ -624,10 +597,7 @@ class TelegramBot:
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
-        text = self.getListHostInfo("systemctl list-units --type=service --state=running")
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        self.command_Generic(update, context, "systemctl list-units --type=service --state=running")
         logger.info(f'Stop {self.command_GetServices.__name__}')
 
     def command_Echo(self, update: Update, context):
