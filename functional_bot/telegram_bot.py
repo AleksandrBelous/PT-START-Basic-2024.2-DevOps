@@ -605,7 +605,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
         print(text)
-        text = re.compile(r'^ii \s([a-z:.0-9-]+)\s').findall(''.join(text))
+        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
         print(text)
         # dpkg -s <название_пакета>
         for part in text[:-1:]:
