@@ -614,11 +614,8 @@ class TelegramBot:
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
         print(text)
         # dpkg -s <название_пакета>
-        # for part in text[:-1:]:
-        #     print(part)
-        #     update.message.reply_text(part)
-        # update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
-        # update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+
+        update.message.reply_text(', '.join(text), reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
