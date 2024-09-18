@@ -506,9 +506,9 @@ class TelegramBot:
         logger.info(f"Stop {self.getHostInfo.__name__}")
         return data
 
-    def command_Generic(self, update: Update, context, command):
-        logger.info(f'Start {self.command_Generic} | {command}')
-        data = self.getHostInfo(command)
+    def general_TG_Output(self, update: Update, context, host_command=None, output_text=None):
+        logger.info(f'Start {self.general_TG_Output} | {host_command}')
+        data = self.getHostInfo(host_command) if host_command else output_text
         try:
             update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
         except BadRequest as e:
@@ -517,46 +517,46 @@ class TelegramBot:
             for part in parts[:-1:]:
                 update.message.reply_text(part)
             update.message.reply_text(parts[-1], reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.command_Generic}')
+        logger.info(f'Stop {self.general_TG_Output}')
 
     def command_GetRelease(self, update: Update, context):
         logger.info(f'Start {self.command_GetRelease.__name__}')
-        self.command_Generic(update, context, "lsb_release -a")
+        self.general_TG_Output(update, context, "lsb_release -a")
         logger.info(f'Stop {self.command_GetRelease.__name__}')
 
     def command_GetUname(self, update: Update, context):
         logger.info(f'Start {self.command_GetUname.__name__}')
-        self.command_Generic(update, context, "uname -nmr")
+        self.general_TG_Output(update, context, "uname -nmr")
         logger.info(f'Stop {self.command_GetUname.__name__}')
 
     def command_GetUptime(self, update: Update, context):
         logger.info(f'Start {self.command_GetUptime.__name__}')
-        self.command_Generic(update, context, "uptime")
+        self.general_TG_Output(update, context, "uptime")
         logger.info(f'Stop {self.command_GetUptime.__name__}')
 
     def command_GetDF(self, update: Update, context):
         logger.info(f'Start {self.command_GetDF.__name__}')
-        self.command_Generic(update, context, "df -h")
+        self.general_TG_Output(update, context, "df -h")
         logger.info(f'Stop {self.command_GetDF.__name__}')
 
     def command_GetFree(self, update: Update, context):
         logger.info(f'Start {self.command_GetFree.__name__}')
-        self.command_Generic(update, context, "free -h")
+        self.general_TG_Output(update, context, "free -h")
         logger.info(f'Stop {self.command_GetFree.__name__}')
 
     def command_GetMpstat(self, update: Update, context):
         logger.info(f'Start {self.command_GetMpstat.__name__}')
-        self.command_Generic(update, context, "mpstat -P ALL 1 1")
+        self.general_TG_Output(update, context, "mpstat -P ALL 1 1")
         logger.info(f'Stop {self.command_GetMpstat.__name__}')
 
     def command_GetW(self, update: Update, context):
         logger.info(f'Start {self.command_GetW.__name__}')
-        self.command_Generic(update, context, "w")
+        self.general_TG_Output(update, context, "w")
         logger.info(f'Stop {self.command_GetW.__name__}')
 
     def command_GetAuths(self, update: Update, context):
         logger.info(f'Start {self.command_GetAuths.__name__}')
-        self.command_Generic(update, context, "last -n 10")
+        self.general_TG_Output(update, context, "last -n 10")
         logger.info(f'Stop {self.command_GetAuths.__name__}')
 
     def command_GetCritical(self, update: Update, context):
@@ -573,31 +573,27 @@ class TelegramBot:
 
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
-        self.command_Generic(update, context, "ps aux")
+        self.general_TG_Output(update, context, "ps aux")
         logger.info(f'Stop {self.command_GetPS.__name__}')
 
     def command_GetSS(self, update: Update, context):
         logger.info(f'Start {self.command_GetSS.__name__}')
-        self.command_Generic(update, context, "ss -tuln")
+        self.general_TG_Output(update, context, "ss -tuln")
         logger.info(f'Stop {self.command_GetSS.__name__}')
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
-        print(text)
+        # print(text)
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
-        print(text)
+        # print(text)
         # dpkg -s <название_пакета>
-
-        try:
-            update.message.reply_text(', '.join(text), reply_markup=self.keyboard_menu_main())
-        except BadRequest as e:
-            update.message.reply_text(str(e), reply_markup=self.keyboard_menu_main())
+        self.general_TG_Output(update, context, None, ', '.join(text))
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
-        self.command_Generic(update, context, "systemctl list-units --type=service --state=running")
+        self.general_TG_Output(update, context, "systemctl list-units --type=service --state=running")
         logger.info(f'Stop {self.command_GetServices.__name__}')
 
     def command_Echo(self, update: Update, context):
