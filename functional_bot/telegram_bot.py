@@ -562,8 +562,9 @@ class TelegramBot:
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
         text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
-
+        print([text])
         text = re.sub(r'nautilus', r'sevsu', text)
+        print([text])
         self.general_TG_Output(update, context, None, text)
         logger.info(f'Stop {self.command_GetCritical.__name__}')
 
