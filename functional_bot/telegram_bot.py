@@ -608,14 +608,7 @@ class TelegramBot:
 
     # Команда для получения информации о конкретном пакете
     def get_package_info(self, package_name):
-        try:
-            result = subprocess.run(['dpkg', '-s', package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            if result.returncode == 0:
-                return result.stdout.decode('utf-8')
-            else:
-                return f"Пакет '{package_name}' не найден."
-        except Exception as e:
-            return f"Ошибка при выполнении команды: {str(e)}"
+        return self.getHostInfo(f"dpkg -s {package_name}")
 
     # Обработка нажатия кнопок
     def button_handler(self, update: Update, context):
