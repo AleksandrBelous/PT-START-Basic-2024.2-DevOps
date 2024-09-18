@@ -506,31 +506,31 @@ class TelegramBot:
 
     def command_GetRelease(self, update: Update, context):
         logger.info(f'Start {self.command_GetRelease.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("lsb_release -a")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetRelease.__name__}')
 
-    def command_GetUptime(self, update: Update, context):
-        logger.info(f'Start {self.command_GetUptime.__name__}')
-        text = self.getHostInfo()
-        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.command_GetUptime.__name__}')
-
     def command_GetUname(self, update: Update, context):
         logger.info(f'Start {self.command_GetUname.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("uname -nmr")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetUname.__name__}')
 
+    def command_GetUptime(self, update: Update, context):
+        logger.info(f'Start {self.command_GetUptime.__name__}')
+        text = self.getHostInfo("uptime")
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        logger.info(f'Stop {self.command_GetUptime.__name__}')
+
     def command_GetDF(self, update: Update, context):
         logger.info(f'Start {self.command_GetDF.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("df -h")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetDF.__name__}')
 
     def command_GetFree(self, update: Update, context):
         logger.info(f'Start {self.command_GetFree.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("free -h")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetFree.__name__}')
 
@@ -542,25 +542,25 @@ class TelegramBot:
 
     def command_GetW(self, update: Update, context):
         logger.info(f'Start {self.command_GetW.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("w")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetW.__name__}')
 
     def command_GetAuths(self, update: Update, context):
         logger.info(f'Start {self.command_GetAuths.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("last -n 10")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAuths.__name__}')
 
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("tail -n 5 /var/log/syslog")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetCritical.__name__}')
 
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("ps aux")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetPS.__name__}')
 
@@ -572,13 +572,14 @@ class TelegramBot:
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("dpkg -l")
+        # dpkg -s <название_пакета>
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("systemctl list-units --type=service --state=running")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetServices.__name__}')
 
