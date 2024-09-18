@@ -19,6 +19,7 @@ from pathlib import Path
 
 from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+from telegram.error import BadRequest
 
 
 class DotDict(dict):
@@ -615,7 +616,10 @@ class TelegramBot:
         print(text)
         # dpkg -s <название_пакета>
 
-        update.message.reply_text(', '.join(text), reply_markup=self.keyboard_menu_main())
+        try:
+            update.message.reply_text(', '.join(text), reply_markup=self.keyboard_menu_main())
+        except BadRequest as e:
+            update.message.reply_text(str(e), reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
