@@ -3,7 +3,7 @@ import os
 import datetime
 import logging
 
-# logging.disable(logging.CRITICAL)
+logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
     logging.basicConfig(filename=f'log-telegram-bot-{os.path.basename(__file__)}-{datetime.datetime.now()}.txt',
@@ -604,6 +604,8 @@ class TelegramBot:
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
+        text = re.compile(r'^ii \s([a-z:.0-9-]+)\s').search(''.join(text)).groups()
+        print(text)
         # dpkg -s <название_пакета>
         for part in text[:-1:]:
             update.message.reply_text(part)
