@@ -600,11 +600,11 @@ class TelegramBot:
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
-        try:
-            result = subprocess.run(['dpkg', '-l', '|', 'cat'], stdout=subprocess.PIPE)
-            return result.stdout.decode('utf-8')
-        except Exception as e:
-            return f"Ошибка при выполнении команды: {str(e)}"
+        text = self.getHostInfo("dpkg -l | cat")
+        # print(text)
+        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
+        # print(text)
+        return ', '.join(text)
 
     # Команда для получения информации о конкретном пакете
     def get_package_info(self, package_name):
