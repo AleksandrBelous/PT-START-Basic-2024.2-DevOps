@@ -601,7 +601,7 @@ class TelegramBot:
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
         try:
-            result = subprocess.run(['apt', 'list', '--installed'], stdout=subprocess.PIPE)
+            result = subprocess.run(['dpkg', '-l', '|', 'cat'], stdout=subprocess.PIPE)
             return result.stdout.decode('utf-8')
         except Exception as e:
             return f"Ошибка при выполнении команды: {str(e)}"
@@ -609,7 +609,7 @@ class TelegramBot:
     # Команда для получения информации о конкретном пакете
     def get_package_info(self, package_name):
         try:
-            result = subprocess.run(['apt', 'show', package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(['dpkg', '-s', package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0:
                 return result.stdout.decode('utf-8')
             else:
@@ -637,7 +637,7 @@ class TelegramBot:
             update.message.reply_text(package_info[:4096])  # Ограничение на длину сообщения
             context.user_data['state'] = None
         else:
-            update.message.reply_text("Используйте команду /get_apt_list для выбора действия.")
+            update.message.reply_text(f"{update.message.text}. Используйте команду /start для выбора действия.")
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -743,14 +743,14 @@ class TelegramBot:
         # Обработка нажатия кнопок
         dp.add_handler(CallbackQueryHandler(self.button_handler))
 
-        # Обработка сообщения с названием пакета
+        # Обработка сообщения с названием пакета или для ЭХО-сообщений
         dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.handle_message))
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
 
         # Обработчик текстовых сообщений /echo
-        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
+        # dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
 
         # Запускаем бота
         updater.start_polling()
