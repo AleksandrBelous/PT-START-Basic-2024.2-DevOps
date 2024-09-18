@@ -477,8 +477,8 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getHostInfo(self, command="uname -a"):
-        logger.info(f"Start {self.getHostInfo.__name__}")
+    def getStrHostInfo(self, command="uname -a"):
+        logger.info(f"Start {self.getStrHostInfo.__name__}")
 
         host = os.getenv('HOST')
         logger.info('Get HOST')
@@ -501,17 +501,23 @@ class TelegramBot:
         client.close()
         data = str(data).replace('\\n', '\n').replace('\\t', '\t')[2:-1]
 
+        logger.info(f"Stop {self.getStrHostInfo.__name__}")
+        return data
+
+    def getListHostInfo(self, command="uname -a"):
+        data = self.getStrHostInfo(command)
+
         # Максимальная длина сообщения в Telegram
         max_length = 4096
         # Разбиваем сообщение на части
         parts = [data[i:i + max_length] for i in range(0, len(data), max_length)]
 
-        logger.info(f"Stop {self.getHostInfo.__name__}")
+        logger.info(f"Stop {self.getListHostInfo.__name__}")
         return parts
 
     def command_GetRelease(self, update: Update, context):
         logger.info(f'Start {self.command_GetRelease.__name__}')
-        text = self.getHostInfo("lsb_release -a")
+        text = self.getListHostInfo("lsb_release -a")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -519,7 +525,7 @@ class TelegramBot:
 
     def command_GetUname(self, update: Update, context):
         logger.info(f'Start {self.command_GetUname.__name__}')
-        text = self.getHostInfo("uname -nmr")
+        text = self.getListHostInfo("uname -nmr")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -527,7 +533,7 @@ class TelegramBot:
 
     def command_GetUptime(self, update: Update, context):
         logger.info(f'Start {self.command_GetUptime.__name__}')
-        text = self.getHostInfo("uptime")
+        text = self.getListHostInfo("uptime")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -535,7 +541,7 @@ class TelegramBot:
 
     def command_GetDF(self, update: Update, context):
         logger.info(f'Start {self.command_GetDF.__name__}')
-        text = self.getHostInfo("df -h")
+        text = self.getListHostInfo("df -h")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -543,7 +549,7 @@ class TelegramBot:
 
     def command_GetFree(self, update: Update, context):
         logger.info(f'Start {self.command_GetFree.__name__}')
-        text = self.getHostInfo("free -h")
+        text = self.getListHostInfo("free -h")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -551,7 +557,7 @@ class TelegramBot:
 
     def command_GetMpstat(self, update: Update, context):
         logger.info(f'Start {self.command_GetMpstat.__name__}')
-        text = self.getHostInfo("mpstat -P ALL 1 1")
+        text = self.getListHostInfo("mpstat -P ALL 1 1")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -559,7 +565,7 @@ class TelegramBot:
 
     def command_GetW(self, update: Update, context):
         logger.info(f'Start {self.command_GetW.__name__}')
-        text = self.getHostInfo("w")
+        text = self.getListHostInfo("w")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -567,7 +573,7 @@ class TelegramBot:
 
     def command_GetAuths(self, update: Update, context):
         logger.info(f'Start {self.command_GetAuths.__name__}')
-        text = self.getHostInfo("last -n 10")
+        text = self.getListHostInfo("last -n 10")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -575,7 +581,7 @@ class TelegramBot:
 
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
-        text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
+        text = self.getListHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
 
         text = re.sub(r'nautilus', r'sevsu', text[-1])
         text = text.split('\n')
@@ -587,7 +593,7 @@ class TelegramBot:
 
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
-        text = self.getHostInfo("ps aux")
+        text = self.getListHostInfo("ps aux")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -595,7 +601,7 @@ class TelegramBot:
 
     def command_GetSS(self, update: Update, context):
         logger.info(f'Start {self.command_GetSS.__name__}')
-        text = self.getHostInfo("ss -tuln")
+        text = self.getListHostInfo("ss -tuln")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
@@ -603,21 +609,21 @@ class TelegramBot:
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-        text = self.getHostInfo("dpkg -l | cat")
+        text = self.getStrHostInfo("dpkg -l | cat")
         # print(text)
-        text = ','.join(re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text)))
-        # print(text)
+        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
+        print(text)
         # dpkg -s <название_пакета>
         # for part in text[:-1:]:
         #     print(part)
         #     update.message.reply_text(part)
         # update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
-        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
+        # update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
-        text = self.getHostInfo("systemctl list-units --type=service --state=running")
+        text = self.getListHostInfo("systemctl list-units --type=service --state=running")
         for part in text[:-1:]:
             update.message.reply_text(part)
         update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
