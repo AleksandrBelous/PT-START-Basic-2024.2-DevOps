@@ -605,13 +605,14 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
         # print(text)
-        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
+        text = ','.join(re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text)))
         # print(text)
         # dpkg -s <название_пакета>
-        for part in text[:-1:]:
-            print(part)
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        # for part in text[:-1:]:
+        #     print(part)
+        #     update.message.reply_text(part)
+        # update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
 
     def command_GetServices(self, update: Update, context):
