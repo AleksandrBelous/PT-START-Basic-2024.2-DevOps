@@ -563,12 +563,8 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetCritical.__name__}')
         text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
 
-        text = re.sub(r'nautilus', r'sevsu', text[-1])
-        text = text.split('\n')
-
-        for part in text[:-1:]:
-            update.message.reply_text(part)
-        update.message.reply_text(text[-1], reply_markup=self.keyboard_menu_main())
+        text = re.sub(r'nautilus', r'sevsu', text)
+        self.general_TG_Output(update, context, None, text)
         logger.info(f'Stop {self.command_GetCritical.__name__}')
 
     def command_GetPS(self, update: Update, context):
@@ -585,7 +581,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
         # print(text)
-        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(''.join(text))
+        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
         # print(text)
         # dpkg -s <название_пакета>
         self.general_TG_Output(update, context, None, ', '.join(text))
