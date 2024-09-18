@@ -1,3 +1,5 @@
+import subprocess
+
 import re
 import os
 import datetime
@@ -18,7 +20,7 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
 from telegram.error import BadRequest
 
 
@@ -562,9 +564,9 @@ class TelegramBot:
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
         text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
-        print([text])
+        # print([text])
         text = re.sub(r'nautilus', r'sevsu', text)
-        print([text])
+        # print([text])
         self.general_TG_Output(update, context, None, text)
         logger.info(f'Stop {self.command_GetCritical.__name__}')
 
@@ -580,13 +582,62 @@ class TelegramBot:
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-        text = self.getHostInfo("dpkg -l | cat")
-        # print(text)
-        text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
-        # print(text)
-        # dpkg -s <название_пакета>
-        self.general_TG_Output(update, context, None, ', '.join(text))
+
+        reply_markup = InlineKeyboardMarkup([
+                [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
+                [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
+                ]
+                )
+        update.message.reply_text('Выберите опцию:', reply_markup=reply_markup)
+
+        # text = self.getHostInfo("dpkg -l | cat")
+        # # print(text)
+        # text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
+        # # print(text)
+        # # dpkg -s <название_пакета>
+        # self.general_TG_Output(update, context, None, ', '.join(text))
         logger.info(f'Stop {self.command_GetAptList.__name__}')
+
+    # Команда для получения списка всех установленных пакетов
+    def get_apt_list(self):
+        try:
+            result = subprocess.run(['apt', 'list', '--installed'], stdout=subprocess.PIPE)
+            return result.stdout.decode('utf-8')
+        except Exception as e:
+            return f"Ошибка при выполнении команды: {str(e)}"
+
+    # Команда для получения информации о конкретном пакете
+    def get_package_info(self, package_name):
+        try:
+            result = subprocess.run(['apt', 'show', package_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode == 0:
+                return result.stdout.decode('utf-8')
+            else:
+                return f"Пакет '{package_name}' не найден."
+        except Exception as e:
+            return f"Ошибка при выполнении команды: {str(e)}"
+
+    # Обработка нажатия кнопок
+    def button_handler(self, update: Update, context):
+        query = update.callback_query
+        query.answer()
+
+        if query.data == 'all_packages':
+            apt_list = self.get_apt_list()
+            query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:4096]}")  # Ограничение на длину сообщения
+        elif query.data == 'search_package':
+            query.edit_message_text(text="Введите название пакета:")
+            return 'WAITING_FOR_PACKAGE_NAME'
+
+    # Обработка ввода названия пакета
+    def handle_message(self, update: Update, context):
+        if context.user_data.get('state') == 'WAITING_FOR_PACKAGE_NAME':
+            package_name = update.message.text
+            package_info = self.get_package_info(package_name)
+            update.message.reply_text(package_info[:4096])  # Ограничение на длину сообщения
+            context.user_data['state'] = None
+        else:
+            update.message.reply_text("Используйте команду /get_apt_list для выбора действия.")
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -688,6 +739,12 @@ class TelegramBot:
 
         # Обработчик команды /get_apt_list
         dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
+
+        # Обработка нажатия кнопок
+        dp.add_handler(CallbackQueryHandler(self.button_handler))
+
+        # Обработка сообщения с названием пакета
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.handle_message))
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
