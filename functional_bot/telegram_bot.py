@@ -624,7 +624,7 @@ class TelegramBot:
 
         if query.data == 'all_packages':
             apt_list = self.get_apt_list()
-            query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:4096]}")  # Ограничение на длину сообщения
+            query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:2000]}")  # Ограничение на длину сообщения
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
             return 'WAITING_FOR_PACKAGE_NAME'
