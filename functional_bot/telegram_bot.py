@@ -536,7 +536,7 @@ class TelegramBot:
 
     def command_GetMpstat(self, update: Update, context):
         logger.info(f'Start {self.command_GetMpstat.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("mpstat -P ALL 1 1")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetMpstat.__name__}')
 
@@ -560,19 +560,19 @@ class TelegramBot:
 
     def command_GetPS(self, update: Update, context):
         logger.info(f'Start {self.command_GetPS.__name__}')
-        text = self.getHostInfo("ps aux")
+        text = self.getHostInfo("ps aux | cat")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetPS.__name__}')
 
     def command_GetSS(self, update: Update, context):
         logger.info(f'Start {self.command_GetSS.__name__}')
-        text = self.getHostInfo()
+        text = self.getHostInfo("ss -tuln")
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetSS.__name__}')
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-        text = self.getHostInfo("dpkg -l")
+        text = self.getHostInfo("dpkg -l | cat")
         # dpkg -s <название_пакета>
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
