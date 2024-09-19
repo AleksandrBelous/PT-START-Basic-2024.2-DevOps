@@ -509,7 +509,7 @@ class TelegramBot:
         return data
 
     def general_TG_Output(self, update: Update, context, host_command=None, output_text=None):
-        logger.info(f'Start {self.general_TG_Output} | {host_command}')
+        logger.info(f'Start {self.general_TG_Output} && {host_command}')
         data = self.getHostInfo(host_command) if host_command else output_text
         try:
             update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
@@ -583,20 +583,16 @@ class TelegramBot:
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
 
-        reply_markup = InlineKeyboardMarkup([
-                [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
-                [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
-                ]
+        reply_markup = InlineKeyboardMarkup(
+                [
+                        [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
+                        [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
+                        ]
                 )
         update.message.reply_text('Выберите опцию:', reply_markup=reply_markup)
 
-        # text = self.getHostInfo("dpkg -l | cat")
-        # # print(text)
-        # text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
-        # # print(text)
-        # # dpkg -s <название_пакета>
-        # self.general_TG_Output(update, context, None, ', '.join(text))
         logger.info(f'Stop {self.command_GetAptList.__name__}')
+        return ConversationHandler.END
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
@@ -606,31 +602,29 @@ class TelegramBot:
         # print(text)
         return ', '.join(text)
 
-    # Команда для получения информации о конкретном пакете
-    def get_package_info(self, package_name):
-        return self.getHostInfo(f"dpkg -s {package_name}")
-
     # Обработка нажатия кнопок
     def button_handler(self, update: Update, context):
         query = update.callback_query
         query.answer()
 
         if query.data == 'all_packages':
-            apt_list = self.get_apt_list()
-            query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:2000]}")  # Ограничение на длину сообщения
+            self.general_TG_Output(update, context, None, self.get_apt_list())
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
-            return 'WAITING_FOR_PACKAGE_NAME'
+            return self.commands.getAptList.state_point
 
     # Обработка ввода названия пакета
     def handle_message(self, update: Update, context):
-        if context.user_data.get('state') == 'WAITING_FOR_PACKAGE_NAME':
+        if context.user_data.get('state') == self.commands.getAptList.state_point:
             package_name = update.message.text
-            package_info = self.get_package_info(package_name)
-            update.message.reply_text(package_info[:4096])  # Ограничение на длину сообщения
+            self.general_TG_Output(update, context, f"dpkg -s {package_name}")
+            # package_info = self.get_package_info(package_name)
+            # update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
             context.user_data['state'] = None
+            return ConversationHandler.END
         else:
             update.message.reply_text(f"{update.message.text}. Используйте команду /start для выбора действия.")
+            return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -731,7 +725,19 @@ class TelegramBot:
         dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.getSS.callback))
 
         # Обработчик команды /get_apt_list
-        dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
+        # dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
+
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.getAptList.command,
+                                             self.commands.getAptList.callback
+                                             )],
+                states={
+                        'WAITING_FOR_PACKAGE_NAME': [
+                                MessageHandler(Filters.text & ~Filters.command, self.handle_message)]
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
 
         # Обработка нажатия кнопок
         dp.add_handler(CallbackQueryHandler(self.button_handler))
@@ -756,9 +762,8 @@ class TelegramBot:
 
         logger.info(f'Stop {self.main.__name__}')
 
-
-if __name__ == '__main__':
-    logger.info('Start Script')
-    bot = TelegramBot()
-    bot.main()
-    logger.info('Stop Script')
+        if __name__ == '__main__':
+            logger.info('Start Script')
+        bot = TelegramBot()
+        bot.main()
+        logger.info('Stop Script')
