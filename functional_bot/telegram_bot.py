@@ -750,12 +750,12 @@ class TelegramBot:
                 entry_points=[CommandHandler(self.commands.getAptList.state_point,
                                              self.commands.getAptList.callback
                                              ),
-                              CommandHandler(self.commands.getAllPackagesList.state_point,
-                                             self.commands.getAllPackagesList.callback
-                                             ),
-                              CommandHandler(self.commands.getOnePackageInfo.state_point,
-                                             self.commands.getOnePackageInfo.callback
-                                             )
+                              # CommandHandler(self.commands.getAllPackagesList.state_point,
+                              #                self.commands.getAllPackagesList.callback
+                              #                ),
+                              # CommandHandler(self.commands.getOnePackageInfo.state_point,
+                              #                self.commands.getOnePackageInfo.callback
+                              #                )
                               ],
                 states={
                         self.commands.getAllPackagesList.state_point: [
@@ -775,9 +775,6 @@ class TelegramBot:
                                        )]
                 )
                 )
-
-        # Обработка сообщения с названием пакета или для ЭХО-сообщений
-        # dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo))
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
