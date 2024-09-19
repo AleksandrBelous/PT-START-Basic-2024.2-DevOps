@@ -631,9 +631,8 @@ class TelegramBot:
     def command_GetAllPackagesList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAllPackagesList.__name__}')
         self.general_TG_Output(update, context, None, self.get_apt_list())
-        update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
         logger.info(f'Stop {self.command_GetAllPackagesList.__name__}')
-        return  # self.commands.getAllPackagesList.state_point  # ConversationHandler.END
+        return ConversationHandler.END
 
     def command_GetOnePackageInfo(self, update: Update, context):
         logger.info(f'Start {self.command_GetOnePackageInfo.__name__}')
@@ -641,17 +640,9 @@ class TelegramBot:
                                   reply_markup=self.keyboard_apt_packages()
                                   # Кнопка для отмены поиска
                                   )
-        # self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
-        # update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
-        logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
-        return  # self.commands.getOnePackageInfo.state_point  # ConversationHandler.END
-
-    def command_GetOnePackageInfo_2(self, update: Update, context):
-        logger.info(f'Start {self.command_GetOnePackageInfo_2.__name__}')
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
-        update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
-        logger.info(f'Stop {self.command_GetOnePackageInfo_2.__name__}')
-        return  # self.commands.getOnePackageInfo.state_point  # ConversationHandler.END
+        logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
+        return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -768,7 +759,7 @@ class TelegramBot:
                         # self.commands.getAllPackagesList.state_point: [
                         #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
                         self.commands.getOnePackageInfo.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo_2)]
+                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
                         },
                 fallbacks=[
                         CommandHandler(self.commands.getAllPackagesList.command,
