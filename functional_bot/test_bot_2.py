@@ -1,6 +1,9 @@
+import os
 import subprocess
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
+from dotenv import load_dotenv
+from pathlib import Path
 
 # Константы для состояний
 WAITING_FOR_PACKAGE_NAME = 1
@@ -29,11 +32,12 @@ def get_package_info(package_name):
 
 # Обработка команды /get_apt_list
 def start_command(update: Update, context):
-    keyboard = [
-            [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
-            [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
-            ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+    reply_markup = InlineKeyboardMarkup(
+            [
+                    [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
+                    [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
+                    ]
+            )
     update.message.reply_text('Выберите опцию:', reply_markup=reply_markup)
     return ConversationHandler.END
 
@@ -66,21 +70,23 @@ def handle_message(update: Update, context):
 
 # Основная функция для запуска бота
 def main():
+    dotenv_path = Path('.env')
+    load_dotenv(dotenv_path=dotenv_path)
+
+    tm_token__ = os.getenv('TM_TOKEN')
     # Замените 'YOUR_API_KEY' на токен вашего Telegram бота
-    updater = Updater("YOUR_API_KEY", use_context=True)
+    updater = Updater(tm_token__, use_context=True)
     dp = updater.dispatcher
 
-    # Создание ConversationHandler
-    conv_handler = ConversationHandler(
+    # Добавляем обработчики
+    dp.add_handler(ConversationHandler(
             entry_points=[CommandHandler('get_apt_list', start_command)],
             states={
                     WAITING_FOR_PACKAGE_NAME: [MessageHandler(Filters.text & ~Filters.command, handle_message)]
                     },
             fallbacks=[]
             )
-
-    # Добавляем обработчики
-    dp.add_handler(conv_handler)
+            )
     dp.add_handler(CallbackQueryHandler(button_handler))
 
     # Запуск бота
