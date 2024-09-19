@@ -752,9 +752,9 @@ class TelegramBot:
 
         dp.add_handler(ConversationHandler(
                 entry_points=[
-                        # CommandHandler(self.commands.getAptList.state_point,
-                        #                self.commands.getAptList.callback
-                        #                ),
+                        CommandHandler(self.commands.getAptList.state_point,
+                                       self.commands.getAptList.callback
+                                       ),
                         # CommandHandler(self.commands.getAllPackagesList.state_point,
                         #                self.commands.getAllPackagesList.callback
                         #                ),
@@ -763,6 +763,10 @@ class TelegramBot:
                         #                )
                         ],
                 states={
+                        self.commands.getAptList.state_point       : [
+                                CommandHandler(self.commands.getAptList.state_point,
+                                               self.commands.getAptList.callback
+                                               )],
                         # self.commands.getAllPackagesList.state_point: [
                         #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
                         self.commands.getOnePackageInfo.state_point: [
