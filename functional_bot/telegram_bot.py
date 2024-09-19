@@ -642,7 +642,7 @@ class TelegramBot:
                                   )
         # self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
-        return #ConversationHandler.END
+        return  # ConversationHandler.END
 
     def command_GetOnePackageInfo_2(self, update: Update, context):
         logger.info(f'Start {self.command_GetOnePackageInfo_2.__name__}')
@@ -771,9 +771,9 @@ class TelegramBot:
                         CommandHandler(self.commands.getAllPackagesList.command,
                                        self.commands.getAllPackagesList.callback
                                        ),
-                        # CommandHandler(self.commands.getOnePackageInfo.command,
-                        #                self.commands.getOnePackageInfo.callback
-                        #                ),
+                        CommandHandler(self.commands.getOnePackageInfo.command,
+                                       self.commands.getOnePackageInfo.callback
+                                       ),
                         CommandHandler(self.commands.cancel.command,
                                        self.commands.cancel.callback
                                        )]
