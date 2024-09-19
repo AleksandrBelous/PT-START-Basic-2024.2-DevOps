@@ -631,12 +631,9 @@ class TelegramBot:
     def command_GetAllPackagesList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAllPackagesList.__name__}')
         self.general_TG_Output(update, context, None, self.get_apt_list())
-        # update.message.reply_text('Выберите опцию:',
-        #                           reply_markup=self.keyboard_apt_packages()
-        #                           # Кнопка для отмены поиска
-        #                           )
+        self.command_GetAptList(update, context)
         logger.info(f'Stop {self.command_GetAllPackagesList.__name__}')
-        return self.commands.getAptList.state_point  # ConversationHandler.END
+        return ConversationHandler.END
 
     def command_GetOnePackageInfo(self, update: Update, context):
         logger.info(f'Start {self.command_GetOnePackageInfo.__name__}')
@@ -645,6 +642,7 @@ class TelegramBot:
                                   # Кнопка для отмены поиска
                                   )
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        self.command_GetAptList(update, context)
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
         return ConversationHandler.END
 
