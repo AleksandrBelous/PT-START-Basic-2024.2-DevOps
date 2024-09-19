@@ -624,38 +624,29 @@ class TelegramBot:
     def get_apt_list(self):
         logger.info(f'Start {self.get_apt_list.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
-        # print(text)
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
-        # print(text)
         logger.info(f'Stop {self.get_apt_list.__name__}')
         return ', '.join(text)
 
     def command_GetAllPackagesList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAllPackagesList.__name__}')
         self.general_TG_Output(update, context, None, self.get_apt_list())
+        # update.message.reply_text('Выберите опцию:',
+        #                           reply_markup=self.keyboard_apt_packages()
+        #                           # Кнопка для отмены поиска
+        #                           )
         logger.info(f'Stop {self.command_GetAllPackagesList.__name__}')
-        return ConversationHandler.END
+        return self.commands.getAptList.state_point  # ConversationHandler.END
 
-    # Обработка ввода названия пакета
     def command_GetOnePackageInfo(self, update: Update, context):
         logger.info(f'Start {self.command_GetOnePackageInfo.__name__}')
+        update.message.reply_text('Введите название пакета:',
+                                  reply_markup=self.keyboard_apt_packages()
+                                  # Кнопка для отмены поиска
+                                  )
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
         return ConversationHandler.END
-
-    # Обработка нажатия кнопок
-    def buttonsHandler(self, update: Update, context):
-        logger.info(f'Start {self.buttonsHandler.__name__}')
-        query = update.callback_query
-        query.answer()
-
-        if query.data == 'all_packages':
-            logger.info(f'Stop {self.buttonsHandler.__name__} from IF')
-            return self.commands.getAptList.state_point.get_all_packages
-        elif query.data == 'search_package':
-            query.edit_message_text(text="Введите название пакета:")
-            logger.info(f'Stop {self.buttonsHandler.__name__} from ELSE')
-            return self.commands.getAptList.state_point.get_one_package
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
