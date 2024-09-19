@@ -225,7 +225,12 @@ class TelegramBot:
                                 {
                                         'command'    : 'get_apt_list',
                                         'button'     : '/get_apt_list',
-                                        'state_point': 'get_apt_list',
+                                        'state_point': DotDict(
+                                                {
+                                                        'get_all_packages': 'get_all_packages',
+                                                        'get_one_package' : 'get_one_package'
+                                                        },
+                                                ),
                                         'callback'   : self.command_GetAptList,
                                         }
                                 ),
@@ -613,39 +618,32 @@ class TelegramBot:
         logger.info(f'Stop {self.get_apt_list.__name__}')
         return ', '.join(text)
 
+    def getAllPackagesList(self, update: Update, context):
+        logger.info(f'Start {self.getOnePackageInfo.__name__}')
+        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        logger.info(f'Stop {self.getOnePackageInfo.__name__}')
+        return ConversationHandler.END
+
+    # Обработка ввода названия пакета
+    def getOnePackageInfo(self, update: Update, context):
+        logger.info(f'Start {self.getOnePackageInfo.__name__}')
+        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        logger.info(f'Stop {self.getOnePackageInfo.__name__}')
+        return ConversationHandler.END
+
     # Обработка нажатия кнопок
-    def button_handler(self, update: Update, context):
-        logger.info(f'Start {self.button_handler.__name__}')
+    def buttonsHandler(self, update: Update, context):
+        logger.info(f'Start {self.buttonsHandler.__name__}')
         query = update.callback_query
         query.answer()
 
         if query.data == 'all_packages':
-            data = self.get_apt_list()
-            # query.edit_message_text(text=text)
-            try:
-                query.edit_message_text(text=data, reply_markup=self.keyboard_apt_packages())
-                # update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
-            except BadRequest as e:
-                max_length = 4096
-                parts = [data[i:i + max_length] for i in range(0, len(data), max_length)]
-                for part in parts[:-1:]:
-                    query.edit_message_text(part)
-                query.edit_message_text(parts[-1], reply_markup=self.keyboard_apt_packages())
-            logger.info(f'Stop {self.button_handler.__name__} from IF')
+            logger.info(f'Stop {self.buttonsHandler.__name__} from IF')
+            return self.commands.getAptList.state_point.get_all_packages
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
-            logger.info(f'Stop {self.button_handler.__name__} from ELSE')
-            return self.commands.getAptList.state_point
-
-    # Обработка ввода названия пакета
-    def handle_message(self, update: Update, context):
-        logger.info(f'Start {self.handle_message.__name__}')
-        package_name = update.message.text
-        self.general_TG_Output(update, context, f"dpkg -s {package_name}")
-        # package_info = self.get_package_info(package_name)
-        # update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
-        logger.info(f'Stop {self.handle_message.__name__}')
-        return ConversationHandler.END
+            logger.info(f'Stop {self.buttonsHandler.__name__} from ELSE')
+            return self.commands.getAptList.state_point.get_one_package
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -746,25 +744,26 @@ class TelegramBot:
         dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.getSS.callback))
 
         # Обработчик команды /get_apt_list
-        # dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
 
         dp.add_handler(ConversationHandler(
                 entry_points=[CommandHandler(self.commands.getAptList.command,
                                              self.commands.getAptList.callback
                                              )],
                 states={
-                        self.commands.getAptList.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.handle_message)]
+                        self.commands.getAptList.state_point.get_all_packages: [
+                                MessageHandler(Filters.text & ~Filters.command, self.getAllPackagesList)],
+                        self.commands.getAptList.state_point.get_one_package : [
+                                MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo)]
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
 
         # Обработка нажатия кнопок
-        dp.add_handler(CallbackQueryHandler(self.button_handler))
+        dp.add_handler(CallbackQueryHandler(self.buttonsHandler))
 
         # Обработка сообщения с названием пакета или для ЭХО-сообщений
-        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.handle_message))
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo))
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
