@@ -646,6 +646,13 @@ class TelegramBot:
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
         return self.commands.getOnePackageInfo.state_point  # ConversationHandler.END
 
+    def command_GetOnePackageInfo_2(self, update: Update, context):
+        logger.info(f'Start {self.command_GetOnePackageInfo_2.__name__}')
+        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
+        logger.info(f'Stop {self.command_GetOnePackageInfo_2.__name__}')
+        return  # self.commands.getOnePackageInfo.state_point  # ConversationHandler.END
+
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
         self.general_TG_Output(update, context, "systemctl list-units --type=service --state=running")
@@ -758,10 +765,10 @@ class TelegramBot:
                               #                )
                               ],
                 states={
-                        self.commands.getAllPackagesList.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
-                        self.commands.getOnePackageInfo.state_point : [
-                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
+                        # self.commands.getAllPackagesList.state_point: [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
+                        self.commands.getOnePackageInfo.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo_2)]
                         },
                 fallbacks=[
                         CommandHandler(self.commands.getAllPackagesList.command,
