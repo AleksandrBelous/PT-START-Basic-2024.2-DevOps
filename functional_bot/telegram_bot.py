@@ -758,18 +758,18 @@ class TelegramBot:
                                              )
                               ],
                 states={
-                        # self.commands.getAllPackagesList.state_point.get_all_packages: [
-                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
-                        # self.commands.getOnePackageInfo.state_point.get_one_package  : [
-                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
+                        self.commands.getAllPackagesList.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
+                        self.commands.getOnePackageInfo.state_point : [
+                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
                         },
                 fallbacks=[
-                        CommandHandler(self.commands.getAllPackagesList.command,
-                                       self.commands.getAllPackagesList.callback
-                                       ),
-                        CommandHandler(self.commands.getOnePackageInfo.command,
-                                       self.commands.getOnePackageInfo.callback
-                                       ),
+                        # CommandHandler(self.commands.getAllPackagesList.command,
+                        #                self.commands.getAllPackagesList.callback
+                        #                ),
+                        # CommandHandler(self.commands.getOnePackageInfo.command,
+                        #                self.commands.getOnePackageInfo.callback
+                        #                ),
                         CommandHandler(self.commands.cancel.command,
                                        self.commands.cancel.callback
                                        )]
