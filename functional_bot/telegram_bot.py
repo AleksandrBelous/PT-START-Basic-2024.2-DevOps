@@ -247,34 +247,45 @@ class TelegramBot:
     def keyboard_menu_main(self):
         logger.info(f'Start {self.keyboard_menu_main.__name__}')
 
-        return ReplyKeyboardMarkup([
-                [KeyboardButton(self.commands.start.button)],
-                [KeyboardButton(self.commands.help.button)],
-                [KeyboardButton(self.commands.findEmails.button)],
-                [KeyboardButton(self.commands.findPhoneNumbers.button)],
-                [KeyboardButton(self.commands.verifyPassword.button)],
-                [KeyboardButton(self.commands.getRelease.button)],
-                [KeyboardButton(self.commands.getUname.button)],
-                [KeyboardButton(self.commands.getUptime.button)],
-                [KeyboardButton(self.commands.getDF.button)],
-                [KeyboardButton(self.commands.getFree.button)],
-                [KeyboardButton(self.commands.getMpstat.button)],
-                [KeyboardButton(self.commands.getW.button)],
-                [KeyboardButton(self.commands.getAuths.button)],
-                [KeyboardButton(self.commands.getCritical.button)],
-                [KeyboardButton(self.commands.getPS.button)],
-                [KeyboardButton(self.commands.getSS.button)],
-                [KeyboardButton(self.commands.getAptList.button)],
-                [KeyboardButton(self.commands.getServices.button)],
-                ], resize_keyboard=True
+        return ReplyKeyboardMarkup(
+                [
+                        [KeyboardButton(self.commands.start.button)],
+                        [KeyboardButton(self.commands.help.button)],
+                        [KeyboardButton(self.commands.findEmails.button)],
+                        [KeyboardButton(self.commands.findPhoneNumbers.button)],
+                        [KeyboardButton(self.commands.verifyPassword.button)],
+                        [KeyboardButton(self.commands.getRelease.button)],
+                        [KeyboardButton(self.commands.getUname.button)],
+                        [KeyboardButton(self.commands.getUptime.button)],
+                        [KeyboardButton(self.commands.getDF.button)],
+                        [KeyboardButton(self.commands.getFree.button)],
+                        [KeyboardButton(self.commands.getMpstat.button)],
+                        [KeyboardButton(self.commands.getW.button)],
+                        [KeyboardButton(self.commands.getAuths.button)],
+                        [KeyboardButton(self.commands.getCritical.button)],
+                        [KeyboardButton(self.commands.getPS.button)],
+                        [KeyboardButton(self.commands.getSS.button)],
+                        [KeyboardButton(self.commands.getAptList.button)],
+                        [KeyboardButton(self.commands.getServices.button)],
+                        ], resize_keyboard=True
                 )
 
     # Функция для создания кнопки отмены запроса
     def keyboard_menu_cancel(self):
         logger.info(f'Start {self.keyboard_menu_cancel.__name__}')
-        return ReplyKeyboardMarkup([
-                [KeyboardButton(self.commands.cancel.button)],
-                ], resize_keyboard=True
+        return ReplyKeyboardMarkup(
+                [
+                        [KeyboardButton(self.commands.cancel.button)],
+                        ], resize_keyboard=True
+                )
+
+    def keyboard_apt_packages(self):
+        logger.info(f'Start {self.keyboard_apt_packages.__name__}')
+        return InlineKeyboardMarkup(
+                [
+                        [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
+                        [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
+                        ]
                 )
 
     def command_Start(self, update: Update = None, context=None):
@@ -582,15 +593,7 @@ class TelegramBot:
 
     def command_GetAptList(self, update: Update, context):
         logger.info(f'Start {self.command_GetAptList.__name__}')
-
-        reply_markup = InlineKeyboardMarkup(
-                [
-                        [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
-                        [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
-                        ]
-                )
-        update.message.reply_text('Выберите опцию:', reply_markup=reply_markup)
-
+        update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
         return ConversationHandler.END
 
@@ -611,8 +614,17 @@ class TelegramBot:
         query.answer()
 
         if query.data == 'all_packages':
-            text = self.get_apt_list()
-            query.edit_message_text(text=text)
+            data = self.get_apt_list()
+            # query.edit_message_text(text=text)
+            try:
+                query.edit_message_text(text=data, reply_markup=self.keyboard_apt_packages())
+                # update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
+            except BadRequest as e:
+                max_length = 4096
+                parts = [data[i:i + max_length] for i in range(0, len(data), max_length)]
+                for part in parts[:-1:]:
+                    query.edit_message_text(part)
+                query.edit_message_text(parts[-1], reply_markup=self.keyboard_apt_packages())
             logger.info(f'Stop {self.button_handler.__name__} from IF')
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
