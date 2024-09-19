@@ -49,7 +49,7 @@ def button_handler(update: Update, context):
 
     if query.data == 'all_packages':
         apt_list = get_apt_list()
-        query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:4096]}")  # Ограничение на длину сообщения
+        query.edit_message_text(text=f"Установленные пакеты:\n{apt_list[:2000]}")  # Ограничение на длину сообщения
     elif query.data == 'search_package':
         query.edit_message_text(text="Введите название пакета:")
         return WAITING_FOR_PACKAGE_NAME
@@ -60,7 +60,7 @@ def handle_message(update: Update, context):
     if context.user_data.get('state') == WAITING_FOR_PACKAGE_NAME:
         package_name = update.message.text
         package_info = get_package_info(package_name)
-        update.message.reply_text(package_info[:4096])  # Ограничение на длину сообщения
+        update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
         context.user_data['state'] = None
         return ConversationHandler.END
     else:
