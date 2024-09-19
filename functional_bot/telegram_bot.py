@@ -751,16 +751,17 @@ class TelegramBot:
         # Обработчик команды /get_apt_list
 
         dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.getAptList.state_point,
-                                             self.commands.getAptList.callback
-                                             ),
-                              # CommandHandler(self.commands.getAllPackagesList.state_point,
-                              #                self.commands.getAllPackagesList.callback
-                              #                ),
-                              # CommandHandler(self.commands.getOnePackageInfo.state_point,
-                              #                self.commands.getOnePackageInfo.callback
-                              #                )
-                              ],
+                entry_points=[
+                        # CommandHandler(self.commands.getAptList.state_point,
+                        #                self.commands.getAptList.callback
+                        #                ),
+                        # CommandHandler(self.commands.getAllPackagesList.state_point,
+                        #                self.commands.getAllPackagesList.callback
+                        #                ),
+                        # CommandHandler(self.commands.getOnePackageInfo.state_point,
+                        #                self.commands.getOnePackageInfo.callback
+                        #                )
+                        ],
                 states={
                         # self.commands.getAllPackagesList.state_point: [
                         #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
