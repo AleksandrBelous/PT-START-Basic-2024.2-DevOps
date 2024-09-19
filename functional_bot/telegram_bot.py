@@ -634,6 +634,7 @@ class TelegramBot:
     # Обработка ввода названия пакета
     def handle_message(self, update: Update, context):
         logger.info(f'Start {self.handle_message.__name__}')
+        print(context.user_data.get('state'))
         if context.user_data.get('state') == self.commands.getAptList.state_point:
             package_name = update.message.text
             self.general_TG_Output(update, context, f"dpkg -s {package_name}")
