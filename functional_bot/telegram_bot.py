@@ -611,7 +611,8 @@ class TelegramBot:
         query.answer()
 
         if query.data == 'all_packages':
-            self.general_TG_Output(update, context, None, self.get_apt_list())
+            text = self.get_apt_list()
+            query.edit_message_text(text=text)
             logger.info(f'Stop {self.button_handler.__name__} from IF')
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
