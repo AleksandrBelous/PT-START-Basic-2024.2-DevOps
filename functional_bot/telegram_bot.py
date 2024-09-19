@@ -640,8 +640,14 @@ class TelegramBot:
                                   reply_markup=self.keyboard_apt_packages()
                                   # Кнопка для отмены поиска
                                   )
-        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        # self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
+        return #ConversationHandler.END
+
+    def command_GetOnePackageInfo_2(self, update: Update, context):
+        logger.info(f'Start {self.command_GetOnePackageInfo_2.__name__}')
+        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
+        logger.info(f'Stop {self.command_GetOnePackageInfo_2.__name__}')
         return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
@@ -744,37 +750,35 @@ class TelegramBot:
 
         # Обработчик команды /get_apt_list
 
-        dp.add_handler(CommandHandler(self.commands.getAptList.command, self.commands.getAptList.callback))
-
-        # dp.add_handler(ConversationHandler(
-        #         entry_points=[CommandHandler(self.commands.getAptList.state_point,
-        #                                      self.commands.getAptList.callback
-        #                                      ),
-        #                       # CommandHandler(self.commands.getAllPackagesList.state_point,
-        #                       #                self.commands.getAllPackagesList.callback
-        #                       #                ),
-        #                       # CommandHandler(self.commands.getOnePackageInfo.state_point,
-        #                       #                self.commands.getOnePackageInfo.callback
-        #                       #                )
-        #                       ],
-        #         states={
-        #                 # self.commands.getAllPackagesList.state_point: [
-        #                 #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
-        #                 self.commands.getOnePackageInfo.state_point: [
-        #                         MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
-        #                 },
-        #         fallbacks=[
-        #                 CommandHandler(self.commands.getAllPackagesList.command,
-        #                                self.commands.getAllPackagesList.callback
-        #                                ),
-        #                 CommandHandler(self.commands.getOnePackageInfo.command,
-        #                                self.commands.getOnePackageInfo.callback
-        #                                ),
-        #                 CommandHandler(self.commands.cancel.command,
-        #                                self.commands.cancel.callback
-        #                                )]
-        #         )
-        #         )
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.getAptList.state_point,
+                                             self.commands.getAptList.callback
+                                             ),
+                              # CommandHandler(self.commands.getAllPackagesList.state_point,
+                              #                self.commands.getAllPackagesList.callback
+                              #                ),
+                              # CommandHandler(self.commands.getOnePackageInfo.state_point,
+                              #                self.commands.getOnePackageInfo.callback
+                              #                )
+                              ],
+                states={
+                        # self.commands.getAllPackagesList.state_point: [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
+                        self.commands.getOnePackageInfo.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo_2)]
+                        },
+                fallbacks=[
+                        CommandHandler(self.commands.getAllPackagesList.command,
+                                       self.commands.getAllPackagesList.callback
+                                       ),
+                        # CommandHandler(self.commands.getOnePackageInfo.command,
+                        #                self.commands.getOnePackageInfo.callback
+                        #                ),
+                        CommandHandler(self.commands.cancel.command,
+                                       self.commands.cancel.callback
+                                       )]
+                )
+                )
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
