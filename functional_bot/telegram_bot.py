@@ -639,6 +639,7 @@ class TelegramBot:
 
         if query.data == 'all_packages':
             logger.info(f'Stop {self.buttonsHandler.__name__} from IF')
+            query.edit_message_text(text="Введите название пакета 777:")
             return self.commands.getAptList.state_point.get_all_packages
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
