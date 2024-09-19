@@ -596,34 +596,42 @@ class TelegramBot:
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
+        logger.info(f'Start {self.get_apt_list.__name__}')
         text = self.getHostInfo("dpkg -l | cat")
         # print(text)
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
         # print(text)
+        logger.info(f'Stop {self.get_apt_list.__name__}')
         return ', '.join(text)
 
     # Обработка нажатия кнопок
     def button_handler(self, update: Update, context):
+        logger.info(f'Start {self.button_handler.__name__}')
         query = update.callback_query
         query.answer()
 
         if query.data == 'all_packages':
             self.general_TG_Output(update, context, None, self.get_apt_list())
+            logger.info(f'Stop {self.button_handler.__name__} from IF')
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
+            logger.info(f'Stop {self.button_handler.__name__} from ELSE')
             return self.commands.getAptList.state_point
 
     # Обработка ввода названия пакета
     def handle_message(self, update: Update, context):
+        logger.info(f'Start {self.handle_message.__name__}')
         if context.user_data.get('state') == self.commands.getAptList.state_point:
             package_name = update.message.text
             self.general_TG_Output(update, context, f"dpkg -s {package_name}")
             # package_info = self.get_package_info(package_name)
             # update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
             context.user_data['state'] = None
+            logger.info(f'Stop {self.handle_message.__name__} from IF')
             return ConversationHandler.END
         else:
             update.message.reply_text(f"{update.message.text}. Используйте команду /start для выбора действия.")
+            logger.info(f'Stop {self.handle_message.__name__} from ELSE')
             return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
