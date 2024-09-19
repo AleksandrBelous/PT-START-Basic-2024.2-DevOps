@@ -764,12 +764,12 @@ class TelegramBot:
                                 MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
                         },
                 fallbacks=[
-                        # CommandHandler(self.commands.getAllPackagesList.command,
-                        #                self.commands.getAllPackagesList.callback
-                        #                ),
-                        # CommandHandler(self.commands.getOnePackageInfo.command,
-                        #                self.commands.getOnePackageInfo.callback
-                        #                ),
+                        CommandHandler(self.commands.getAllPackagesList.command,
+                                       self.commands.getAllPackagesList.callback
+                                       ),
+                        CommandHandler(self.commands.getOnePackageInfo.command,
+                                       self.commands.getOnePackageInfo.callback
+                                       ),
                         CommandHandler(self.commands.cancel.command,
                                        self.commands.cancel.callback
                                        )]
