@@ -647,7 +647,7 @@ class TelegramBot:
         logger.info(f'Start {self.getOnePackageInfo.__name__}')
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
         logger.info(f'Stop {self.getOnePackageInfo.__name__}')
-        return  # ConversationHandler.END  # self.commands.getAptList.state_point  # ConversationHandler.END
+        return  ConversationHandler.END  # self.commands.getAptList.state_point  # ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
