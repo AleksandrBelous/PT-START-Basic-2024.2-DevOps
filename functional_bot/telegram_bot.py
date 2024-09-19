@@ -619,9 +619,9 @@ class TelegramBot:
         return ', '.join(text)
 
     def getAllPackagesList(self, update: Update, context):
-        logger.info(f'Start {self.getOnePackageInfo.__name__}')
-        self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
-        logger.info(f'Stop {self.getOnePackageInfo.__name__}')
+        logger.info(f'Start {self.getAllPackagesList.__name__}')
+        self.general_TG_Output(update, context, None, self.get_apt_list())
+        logger.info(f'Stop {self.getAllPackagesList.__name__}')
         return ConversationHandler.END
 
     # Обработка ввода названия пакета
