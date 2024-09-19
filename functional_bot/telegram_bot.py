@@ -618,7 +618,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
-        return self.commands.getAptList.state_point  # ConversationHandler.END
+        return  # self.commands.getAptList.state_point
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
@@ -641,13 +641,13 @@ class TelegramBot:
                                   # Кнопка для отмены поиска
                                   )
         logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
-        return self.commands.getOnePackageInfo.state_point  # ConversationHandler.END
+        return self.commands.getOnePackageInfo.state_point
 
     def getOnePackageInfo(self, update: Update, context):
         logger.info(f'Start {self.getOnePackageInfo.__name__}')
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
         logger.info(f'Stop {self.getOnePackageInfo.__name__}')
-        return  ConversationHandler.END  # self.commands.getAptList.state_point  # ConversationHandler.END
+        return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
@@ -754,20 +754,8 @@ class TelegramBot:
                         CommandHandler(self.commands.getAptList.state_point,
                                        self.commands.getAptList.callback
                                        ),
-                        # CommandHandler(self.commands.getAllPackagesList.state_point,
-                        #                self.commands.getAllPackagesList.callback
-                        #                ),
-                        # CommandHandler(self.commands.getOnePackageInfo.state_point,
-                        #                self.commands.getOnePackageInfo.callback
-                        #                )
                         ],
                 states={
-                        # self.commands.getAptList.state_point       : [
-                        #         CommandHandler(self.commands.getAptList.state_point,
-                        #                        self.commands.getAptList.callback
-                        #                        )],
-                        # self.commands.getAllPackagesList.state_point: [
-                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
                         self.commands.getOnePackageInfo.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo)]
                         },
