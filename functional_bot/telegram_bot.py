@@ -634,19 +634,12 @@ class TelegramBot:
     # Обработка ввода названия пакета
     def handle_message(self, update: Update, context):
         logger.info(f'Start {self.handle_message.__name__}')
-        print(context.user_data.get('state'))
-        if context.user_data.get('state') == self.commands.getAptList.state_point:
-            package_name = update.message.text
-            self.general_TG_Output(update, context, f"dpkg -s {package_name}")
-            # package_info = self.get_package_info(package_name)
-            # update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
-            context.user_data['state'] = None
-            logger.info(f'Stop {self.handle_message.__name__} from IF')
-            return ConversationHandler.END
-        else:
-            update.message.reply_text(f"{update.message.text}. Используйте команду /start для выбора действия.")
-            logger.info(f'Stop {self.handle_message.__name__} from ELSE')
-            return ConversationHandler.END
+        package_name = update.message.text
+        self.general_TG_Output(update, context, f"dpkg -s {package_name}")
+        # package_info = self.get_package_info(package_name)
+        # update.message.reply_text(package_info[:2000])  # Ограничение на длину сообщения
+        logger.info(f'Stop {self.handle_message.__name__}')
+        return ConversationHandler.END
 
     def command_GetServices(self, update: Update, context):
         logger.info(f'Start {self.command_GetServices.__name__}')
