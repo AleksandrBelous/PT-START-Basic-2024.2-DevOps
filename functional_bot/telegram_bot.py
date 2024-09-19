@@ -732,7 +732,7 @@ class TelegramBot:
                                              self.commands.getAptList.callback
                                              )],
                 states={
-                        'WAITING_FOR_PACKAGE_NAME': [
+                        self.commands.getAptList.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.handle_message)]
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
@@ -762,8 +762,9 @@ class TelegramBot:
 
         logger.info(f'Stop {self.main.__name__}')
 
-        if __name__ == '__main__':
-            logger.info('Start Script')
-        bot = TelegramBot()
-        bot.main()
-        logger.info('Stop Script')
+
+if __name__ == '__main__':
+    logger.info('Start Script')
+    bot = TelegramBot()
+    bot.main()
+    logger.info('Stop Script')
