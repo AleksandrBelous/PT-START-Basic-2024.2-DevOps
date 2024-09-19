@@ -19,7 +19,7 @@ import paramiko
 from dotenv import load_dotenv
 from pathlib import Path
 
-from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackQueryHandler
 from telegram.error import BadRequest
 
@@ -45,7 +45,7 @@ class TelegramBot:
 
         self.commands = DotDict(
                 {
-                        'start'           : DotDict(
+                        'start'             : DotDict(
                                 {
                                         'command'    : 'start',
                                         'button'     : '/start',
@@ -53,7 +53,7 @@ class TelegramBot:
                                         'callback'   : self.command_Start,
                                         }
                                 ),
-                        'cancel'          : DotDict(
+                        'cancel'            : DotDict(
                                 {
                                         'command'    : 'cancel',
                                         'button'     : '/cancel',
@@ -61,7 +61,7 @@ class TelegramBot:
                                         'callback'   : self.command_Cancel,
                                         }
                                 ),
-                        'help'            : DotDict(
+                        'help'              : DotDict(
                                 {
                                         'command'    : 'help',
                                         'button'     : '/help',
@@ -69,7 +69,7 @@ class TelegramBot:
                                         'callback'   : self.command_Help,
                                         }
                                 ),
-                        'echo'            : DotDict(
+                        'echo'              : DotDict(
                                 {
                                         'command'    : 'echo',
                                         'button'     : '/echo',
@@ -79,7 +79,7 @@ class TelegramBot:
                                 ),
 
                         ### 1. Поиск информации в тексте и её вывод.
-                        'findEmails'      : DotDict(
+                        'findEmails'        : DotDict(
                                 {
                                         'command'    : 'find_email',
                                         'button'     : '/find_email',
@@ -87,7 +87,7 @@ class TelegramBot:
                                         'callback'   : self.command_FindEmails,
                                         }
                                 ),
-                        'findPhoneNumbers': DotDict(
+                        'findPhoneNumbers'  : DotDict(
                                 {
                                         'command'    : 'find_phone_number',
                                         'button'     : '/find_phone_number',
@@ -97,7 +97,7 @@ class TelegramBot:
                                 ),
 
                         ### 2. Проверка сложности пароля регулярным выражением.
-                        'verifyPassword'  : DotDict(
+                        'verifyPassword'    : DotDict(
                                 {
                                         'command'    : 'verify_password',
                                         'button'     : '/verify_password',
@@ -110,7 +110,7 @@ class TelegramBot:
                         ## 3.1. Сбор информации о системе.
 
                         # 3.1.1. О релизе.
-                        'getRelease'      : DotDict(
+                        'getRelease'        : DotDict(
                                 {
                                         'command'    : 'get_release',
                                         'button'     : '/get_release',
@@ -120,7 +120,7 @@ class TelegramBot:
                                 ),
 
                         # 3.1.2. Об архитектуры процессора, имени хоста системы и версии ядра.
-                        'getUname'        : DotDict(
+                        'getUname'          : DotDict(
                                 {
                                         'command'    : 'get_uname',
                                         'button'     : '/get_uname',
@@ -130,7 +130,7 @@ class TelegramBot:
                                 ),
 
                         # 3.1.3. О времени работы.
-                        'getUptime'       : DotDict(
+                        'getUptime'         : DotDict(
                                 {
                                         'command'    : 'get_uptime',
                                         'button'     : '/get_uptime',
@@ -140,7 +140,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.2. Сбор информации о состоянии файловой системы.
-                        'getDF'           : DotDict(
+                        'getDF'             : DotDict(
                                 {
                                         'command'    : 'get_df',
                                         'button'     : '/get_df',
@@ -150,7 +150,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.3. Сбор информации о состоянии оперативной памяти.
-                        'getFree'         : DotDict(
+                        'getFree'           : DotDict(
                                 {
                                         'command'    : 'get_free',
                                         'button'     : '/get_free',
@@ -160,7 +160,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.4. Сбор информации о производительности системы.
-                        'getMpstat'       : DotDict(
+                        'getMpstat'         : DotDict(
                                 {
                                         'command'    : 'get_mpstat',
                                         'button'     : '/get_mpstat',
@@ -170,7 +170,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.5. Сбор информации о работающих в данной системе пользователях.
-                        'getW'            : DotDict(
+                        'getW'              : DotDict(
                                 {
                                         'command'    : 'get_w',
                                         'button'     : '/get_w',
@@ -182,7 +182,7 @@ class TelegramBot:
                         ## 3.6. Сбор логов.
 
                         # 3.6.1. Последние 10 входов в систему.
-                        'getAuths'        : DotDict(
+                        'getAuths'          : DotDict(
                                 {
                                         'command'    : 'get_auths',
                                         'button'     : '/get_auths',
@@ -191,7 +191,7 @@ class TelegramBot:
                                         }
                                 ),
                         # 3.6.2. Последние 5 критических событий.
-                        'getCritical'     : DotDict(
+                        'getCritical'       : DotDict(
                                 {
                                         'command'    : 'get_critical',
                                         'button'     : '/get_critical',
@@ -201,7 +201,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.7 Сбор информации о запущенных процессах.
-                        'getPS'           : DotDict(
+                        'getPS'             : DotDict(
                                 {
                                         'command'    : 'get_ps',
                                         'button'     : '/get_ps',
@@ -211,7 +211,7 @@ class TelegramBot:
                                 ),
 
                         ## 3.8 Сбор информации об используемых портах.
-                        'getSS'           : DotDict(
+                        'getSS'             : DotDict(
                                 {
                                         'command'    : 'get_ss',
                                         'button'     : '/get_ss',
@@ -221,21 +221,32 @@ class TelegramBot:
                                 ),
 
                         ## 3.9 Сбор информации об установленных пакетах.
-                        'getAptList'      : DotDict(
+                        'getAptList'        : DotDict(
                                 {
                                         'command'    : 'get_apt_list',
                                         'button'     : '/get_apt_list',
-                                        'state_point': DotDict(
-                                                {
-                                                        'get_all_packages': 'get_all_packages',
-                                                        'get_one_package' : 'get_one_package'
-                                                        },
-                                                ),
+                                        'state_point': 'get_apt_list',
                                         'callback'   : self.command_GetAptList,
                                         }
                                 ),
+                        'getAllPackagesList': DotDict(
+                                {
+                                        'command'    : 'get_all_packages',
+                                        'button'     : '/get_all_packages',
+                                        'state_point': 'get_all_packages',
+                                        'callback'   : self.command_GetAllPackagesList,
+                                        }
+                                ),
+                        'getOnePackageInfo' : DotDict(
+                                {
+                                        'command'    : 'get_one_package',
+                                        'button'     : '/get_one_package',
+                                        'state_point': 'get_one_package',
+                                        'callback'   : self.command_GetOnePackageInfo,
+                                        }
+                                ),
                         ## 3.10 Сбор информации о запущенных сервисах.
-                        'getServices'     : DotDict(
+                        'getServices'       : DotDict(
                                 {
                                         'command'    : 'get_services',
                                         'button'     : '/get_services',
@@ -286,11 +297,12 @@ class TelegramBot:
 
     def keyboard_apt_packages(self):
         logger.info(f'Start {self.keyboard_apt_packages.__name__}')
-        return InlineKeyboardMarkup(
+        return ReplyKeyboardMarkup(
                 [
-                        [InlineKeyboardButton("Все пакеты", callback_data='all_packages')],
-                        [InlineKeyboardButton("Поиск пакета", callback_data='search_package')]
-                        ]
+                        [KeyboardButton(self.commands.getAllPackagesList.button)],
+                        [KeyboardButton(self.commands.getOnePackageInfo.button)],
+                        [KeyboardButton(self.commands.cancel.button)],
+                        ], resize_keyboard=True
                 )
 
     def command_Start(self, update: Update = None, context=None):
@@ -606,7 +618,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
-        return ConversationHandler.END
+        return self.commands.getAptList.state_point  # ConversationHandler.END
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
@@ -618,17 +630,17 @@ class TelegramBot:
         logger.info(f'Stop {self.get_apt_list.__name__}')
         return ', '.join(text)
 
-    def getAllPackagesList(self, update: Update, context):
-        logger.info(f'Start {self.getAllPackagesList.__name__}')
+    def command_GetAllPackagesList(self, update: Update, context):
+        logger.info(f'Start {self.command_GetAllPackagesList.__name__}')
         self.general_TG_Output(update, context, None, self.get_apt_list())
-        logger.info(f'Stop {self.getAllPackagesList.__name__}')
+        logger.info(f'Stop {self.command_GetAllPackagesList.__name__}')
         return ConversationHandler.END
 
     # Обработка ввода названия пакета
-    def getOnePackageInfo(self, update: Update, context):
-        logger.info(f'Start {self.getOnePackageInfo.__name__}')
+    def command_GetOnePackageInfo(self, update: Update, context):
+        logger.info(f'Start {self.command_GetOnePackageInfo.__name__}')
         self.general_TG_Output(update, context, f"dpkg -s {update.message.text}")
-        logger.info(f'Stop {self.getOnePackageInfo.__name__}')
+        logger.info(f'Stop {self.command_GetOnePackageInfo.__name__}')
         return ConversationHandler.END
 
     # Обработка нажатия кнопок
@@ -639,7 +651,6 @@ class TelegramBot:
 
         if query.data == 'all_packages':
             logger.info(f'Stop {self.buttonsHandler.__name__} from IF')
-            query.edit_message_text(text="Введите название пакета 777:")
             return self.commands.getAptList.state_point.get_all_packages
         elif query.data == 'search_package':
             query.edit_message_text(text="Введите название пакета:")
@@ -747,24 +758,37 @@ class TelegramBot:
         # Обработчик команды /get_apt_list
 
         dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.getAptList.command,
+                entry_points=[CommandHandler(self.commands.getAptList.state_point,
                                              self.commands.getAptList.callback
-                                             )],
+                                             ),
+                              # CommandHandler(self.commands.getAllPackagesList.state_point,
+                              #                self.commands.getAllPackagesList.callback
+                              #                ),
+                              # CommandHandler(self.commands.getOnePackageInfo.state_point,
+                              #                self.commands.getOnePackageInfo.callback
+                              #                )
+                              ],
                 states={
-                        self.commands.getAptList.state_point.get_all_packages: [
-                                MessageHandler(Filters.text & ~Filters.command, self.getAllPackagesList)],
-                        self.commands.getAptList.state_point.get_one_package : [
-                                MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo)]
+                        # self.commands.getAllPackagesList.state_point.get_all_packages: [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
+                        # self.commands.getOnePackageInfo.state_point.get_one_package  : [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.command_GetOnePackageInfo)]
                         },
-                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                fallbacks=[
+                        CommandHandler(self.commands.getAllPackagesList.command,
+                                       self.commands.getAllPackagesList.callback
+                                       ),
+                        CommandHandler(self.commands.getOnePackageInfo.command,
+                                       self.commands.getOnePackageInfo.callback
+                                       ),
+                        CommandHandler(self.commands.cancel.command,
+                                       self.commands.cancel.callback
+                                       )]
                 )
                 )
-
-        # Обработка нажатия кнопок
-        dp.add_handler(CallbackQueryHandler(self.buttonsHandler))
 
         # Обработка сообщения с названием пакета или для ЭХО-сообщений
-        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo))
+        # dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.getOnePackageInfo))
 
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
