@@ -618,7 +618,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetAptList.__name__}')
         update.message.reply_text('Выберите опцию:', reply_markup=self.keyboard_apt_packages())
         logger.info(f'Stop {self.command_GetAptList.__name__}')
-        return self.commands.getAptList.state_point  # ConversationHandler.END
+        return ConversationHandler.END  # self.commands.getAptList.state_point  # ConversationHandler.END
 
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
