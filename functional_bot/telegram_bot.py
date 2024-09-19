@@ -762,10 +762,10 @@ class TelegramBot:
                         #                )
                         ],
                 states={
-                        self.commands.getAptList.state_point       : [
-                                CommandHandler(self.commands.getAptList.state_point,
-                                               self.commands.getAptList.callback
-                                               )],
+                        # self.commands.getAptList.state_point       : [
+                        #         CommandHandler(self.commands.getAptList.state_point,
+                        #                        self.commands.getAptList.callback
+                        #                        )],
                         # self.commands.getAllPackagesList.state_point: [
                         #         MessageHandler(Filters.text & ~Filters.command, self.command_GetAllPackagesList)],
                         self.commands.getOnePackageInfo.state_point: [
@@ -788,7 +788,7 @@ class TelegramBot:
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
 
         # Обработчик текстовых сообщений /echo
-        # dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
+        dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
 
         # Запускаем бота
         updater.start_polling()
