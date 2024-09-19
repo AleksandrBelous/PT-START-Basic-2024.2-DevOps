@@ -509,7 +509,7 @@ class TelegramBot:
         return data
 
     def general_TG_Output(self, update: Update, context, host_command=None, output_text=None):
-        logger.info(f'Start {self.general_TG_Output} && {host_command}')
+        logger.info(f'Start {self.general_TG_Output.__name__} && {host_command} && {output_text[:100]}')
         data = self.getHostInfo(host_command) if host_command else output_text
         try:
             update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
@@ -519,7 +519,7 @@ class TelegramBot:
             for part in parts[:-1:]:
                 update.message.reply_text(part)
             update.message.reply_text(parts[-1], reply_markup=self.keyboard_menu_main())
-        logger.info(f'Stop {self.general_TG_Output}')
+        logger.info(f'Stop {self.general_TG_Output.__name__} && {host_command} && {output_text[:100]}')
 
     def command_GetRelease(self, update: Update, context):
         logger.info(f'Start {self.command_GetRelease.__name__}')
