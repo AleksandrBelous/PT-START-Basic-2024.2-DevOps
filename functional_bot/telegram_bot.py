@@ -310,7 +310,7 @@ class TelegramBot:
         if update:
             user = update.effective_user
             update.message.reply_text(
-                    f'Привет {user.full_name}!',
+                    f'Привет, {user.full_name}!',
                     reply_markup=self.keyboard_menu_main()  # Отправляем клавиатуру с кнопками
                     )
         else:
