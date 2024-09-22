@@ -798,6 +798,9 @@ class TelegramBot:
         # Обработчик команды /get_services
         dp.add_handler(CommandHandler(self.commands.getServices.command, self.commands.getServices.callback))
 
+        # Обработчик команды /get_rep_logs
+        dp.add_handler(CommandHandler(self.commands.getReplLogs.command, self.commands.getReplLogs.callback))
+
         # Обработчик текстовых сообщений /echo
         dp.add_handler(MessageHandler(Filters.text & ~Filters.command, self.commands.echo.callback))
 
