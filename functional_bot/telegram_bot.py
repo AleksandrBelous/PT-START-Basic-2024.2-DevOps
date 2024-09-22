@@ -666,7 +666,7 @@ class TelegramBot:
             try:
                 logger.info(line)
                 template = re.compile(
-                        fr'^({year})'
+                        fr'^({year})-({month})-({day})'
                         )
                 line = template.search(line)
                 logging.info(line.groups())
