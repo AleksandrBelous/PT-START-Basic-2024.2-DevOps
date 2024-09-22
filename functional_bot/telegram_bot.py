@@ -665,7 +665,7 @@ class TelegramBot:
             line = line.strip()
             try:
                 logger.info(line)
-                template = re.compile(fr'^({dt})([0-9:]+)')
+                template = re.compile(fr'^({dt})\s([0-9:]+)(.*)')
                 line = template.search(line)
                 logging.info(line.groups())
                 gps = line.groups()
