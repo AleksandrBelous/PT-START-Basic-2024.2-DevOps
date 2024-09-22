@@ -254,6 +254,15 @@ class TelegramBot:
                                         'callback'   : self.command_GetServices,
                                         },
                                 ),
+                        ## 3.10 Сбор информации о запущенных сервисах.
+                        'getReplLogs': DotDict(
+                                {
+                                        'command'    : 'get_repl_logs',
+                                        'button'     : '/get_repl_logs',
+                                        'state_point': 'get_repl_logs',
+                                        'callback'   : self.command_GetReplLogs,
+                                        },
+                                ),
                         }
                 )
 
