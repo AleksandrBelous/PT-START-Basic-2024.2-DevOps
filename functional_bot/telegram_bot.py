@@ -674,15 +674,15 @@ class TelegramBot:
                 logging.debug(line.groups())
                 gps = line.groups()
                 lst, line = gps[0:-1:1], gps[-1]
-                print(lst)
-                print(line)
+                logger.info(lst)
+                logger.info(line)
                 tpl = tuple(lst)
                 if tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
                 continue
 
-        self.general_TG_Output(update, context, None, '\n'.join())
+        self.general_TG_Output(update, context, None, '\n'.join(['SUCCESS']))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
 
     def command_Echo(self, update: Update, context):
