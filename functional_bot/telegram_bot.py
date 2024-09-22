@@ -1,5 +1,4 @@
-import subprocess
-
+import calendar
 import re
 import os
 import datetime
@@ -37,10 +36,10 @@ class TelegramBot:
         dotenv_path = Path('.env')
         load_dotenv(dotenv_path=dotenv_path)
 
-        self.tm_token__ = os.getenv('TM_TOKEN')
+        self.__tm_token = os.getenv('TM_TOKEN')
         logger.info('Get TM_TOKEN')
 
-        self.chat_id = os.getenv('CHAT_ID')
+        self.__chat_id = os.getenv('CHAT_ID')
         logger.info('Get CHAT_ID')
 
         self.commands = DotDict(
@@ -255,7 +254,7 @@ class TelegramBot:
                                         },
                                 ),
                         ## 3.10 Сбор информации о запущенных сервисах.
-                        'getReplLogs': DotDict(
+                        'getReplLogs'       : DotDict(
                                 {
                                         'command'    : 'get_repl_logs',
                                         'button'     : '/get_repl_logs',
@@ -292,6 +291,7 @@ class TelegramBot:
                         [KeyboardButton(self.commands.getSS.button)],
                         [KeyboardButton(self.commands.getAptList.button)],
                         [KeyboardButton(self.commands.getServices.button)],
+                        [KeyboardButton(self.commands.getReplLogs.button)],
                         ], resize_keyboard=True
                 )
 
@@ -324,7 +324,7 @@ class TelegramBot:
                     )
         else:
             context.bot.send_message(
-                    chat_id=self.chat_id,
+                    chat_id=self.__chat_id,
                     text="Бот запущен!",
                     reply_markup=self.keyboard_menu_main()
                     )
@@ -387,6 +387,8 @@ class TelegramBot:
                 "команда: /get_apt_list, потом /get_one_package\n"
                 "3.10 Сбор информации о запущенных сервисах.\n"
                 "Команда: /get_services\n"
+                "Сбор логов о репликации из /var/log/postgresql/.\n"
+                "Команда: /get_repl_logs\n"
         )
 
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
@@ -646,6 +648,58 @@ class TelegramBot:
         self.general_TG_Output(update, context, "systemctl list-units --type=service --state=running")
         logger.info(f'Stop {self.command_GetServices.__name__}')
 
+    def command_GetReplLogs(self, update: Update, context):
+        logger.info(f'Start {self.command_GetReplLogs.__name__}')
+
+        data = self.getHostInfo("cat /var/log/postgresql/postgresql-15-main.log")
+        dt = datetime.datetime.now()
+        month, day = dt.strftime("%b"), dt.day
+
+        def get_days_in_month(month_name):
+            """
+            Возвращает количество дней в месяце
+            """
+            month_days = {
+                    "Jan": 31,
+                    "Feb": None,
+                    "Mar": 31,
+                    "Apr": 30,
+                    "May": 31,
+                    "Jun": 30,
+                    "Jul": 31,
+                    "Aug": 31,
+                    "Sep": 30,
+                    "Oct": 31,
+                    "Nov": 30,
+                    "Dec": 31
+                    }
+            year = datetime.datetime.now().year
+            month_days["Feb"] = 29 if calendar.isleap(year) else 28
+            return month_days[month_name]
+
+        mod = get_days_in_month(month)
+
+        main_info = set()
+
+        for line in data:
+            line = line.strip()
+            try:
+                template = re.compile(
+                        fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9:]+)\s(.*)'
+                        )
+                line = template.search(line)
+                logging.debug(line.groups())
+                gps = line.groups()
+                month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
+
+                if tpl not in main_info:
+                    main_info.add(tpl)
+            except AttributeError:
+                continue
+
+        self.general_TG_Output(update, context, None, '\n'.join())
+        logger.info(f'Stop {self.command_GetReplLogs.__name__}')
+
     def command_Echo(self, update: Update, context):
         logger.info(f'Start {self.command_Echo.__name__}')
         update.message.reply_text(update.message.text, reply_markup=self.keyboard_menu_main())
@@ -654,7 +708,7 @@ class TelegramBot:
     def main(self):
         logger.info(f'Start {self.main.__name__}')
 
-        updater = Updater(self.tm_token__, use_context=True)
+        updater = Updater(self.__tm_token, use_context=True)
 
         # Получаем диспетчер для регистрации обработчиков
         dp = updater.dispatcher
