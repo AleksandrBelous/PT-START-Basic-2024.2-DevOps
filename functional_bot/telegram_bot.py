@@ -653,45 +653,22 @@ class TelegramBot:
 
         data = self.getHostInfo("cat /var/log/postgresql/postgresql-15-main.log")
         dt = datetime.datetime.now()
-        month, day = dt.strftime("%b"), dt.day
-
-        def get_days_in_month(month_name):
-            """
-            Возвращает количество дней в месяце
-            """
-            month_days = {
-                    "Jan": 31,
-                    "Feb": None,
-                    "Mar": 31,
-                    "Apr": 30,
-                    "May": 31,
-                    "Jun": 30,
-                    "Jul": 31,
-                    "Aug": 31,
-                    "Sep": 30,
-                    "Oct": 31,
-                    "Nov": 30,
-                    "Dec": 31
-                    }
-            year = datetime.datetime.now().year
-            month_days["Feb"] = 29 if calendar.isleap(year) else 28
-            return month_days[month_name]
-
-        mod = get_days_in_month(month)
-
+        year, month, day = dt.year, dt.strftime("%b"), dt.day
         main_info = set()
 
         for line in data:
             line = line.strip()
             try:
                 template = re.compile(
-                        fr'^({month})\s(({day})|({(day - 1) % mod})|({(day - 2) % mod}))\s([0-9:]+)\s(.*)'
+                        fr'^({year})-({month})-({day})\s([0-9:]+)(.*)'
                         )
                 line = template.search(line)
                 logging.debug(line.groups())
                 gps = line.groups()
-                month_, day_, time_, line = gps[0], gps[1], gps[-2], gps[-1]
-
+                lst, line = gps[0:-1:1], gps[-1]
+                print(lst)
+                print(line)
+                tpl = tuple(lst)
                 if tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
