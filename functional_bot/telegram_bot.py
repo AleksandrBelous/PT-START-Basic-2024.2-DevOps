@@ -662,6 +662,7 @@ class TelegramBot:
 
         for line in data:
             line = line.strip()
+            logger.info(line)
             try:
                 template = re.compile(
                         fr'^({year})-({month})-({day})\s([0-9:]+)(.*)'
