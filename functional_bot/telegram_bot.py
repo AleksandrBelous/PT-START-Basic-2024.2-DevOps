@@ -658,7 +658,7 @@ class TelegramBot:
         data = self.getHostInfo(host, port, username, password, command).split('\n')
 
         dt = datetime.datetime.now()
-        year, month, day = dt.year, dt.strftime("%b"), dt.day
+        year, month, day = dt.year, dt.month, dt.day
         main_info = set()
 
         for line in data:
