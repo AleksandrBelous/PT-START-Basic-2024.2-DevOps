@@ -4,6 +4,10 @@ import os
 import datetime
 import logging
 
+from click import command
+from libnvme.nvme import host_iter
+from twisted.spread.pb import portno
+
 # logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
@@ -505,19 +509,19 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getHostInfo(self, command="uname -a"):
+    def getHostInfo(self, host='HOST', port='PORT', username='USER', password='PASSWORD', command="uname -a"):
         logger.info(f"Start {self.getHostInfo.__name__}")
 
-        host = os.getenv('HOST')
+        host = os.getenv(host)
         logger.info('Get HOST')
 
-        port = os.getenv('PORT')
+        port = os.getenv(port)
         logger.info('Get PORT')
 
-        username = os.getenv('USER')
+        username = os.getenv(username)
         logger.info('Get USER')
 
-        password = os.getenv('PASSWORD')
+        password = os.getenv(password)
         logger.info('Get PASSWORD')
 
         client = paramiko.SSHClient()
@@ -650,8 +654,12 @@ class TelegramBot:
 
     def command_GetReplLogs(self, update: Update, context):
         logger.info(f'Start {self.command_GetReplLogs.__name__}')
-
-        data = self.getHostInfo("cat /var/log/postgresql/postgresql-15-main.log")
+        host = 'DB_HOST'
+        port = 'DB_PORT'
+        username = 'DB_USER'
+        password = 'DB_PASSWORD'
+        command = "cat /var/log/postgresql/postgresql-15-main.log"
+        data = self.getHostInfo(host, port, username, password, command)
         dt = datetime.datetime.now()
         year, month, day = dt.year, dt.strftime("%b"), dt.day
         main_info = set()
