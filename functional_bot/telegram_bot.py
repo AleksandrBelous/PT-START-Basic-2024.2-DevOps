@@ -659,7 +659,7 @@ class TelegramBot:
         dt = datetime.datetime.now()
         year, month, day = dt.year, dt.strftime("%b"), dt.day
         main_info = set()
-        logger.info(data)
+        logger.info([data])
         for line in data:
             line = line.strip()
             try:
