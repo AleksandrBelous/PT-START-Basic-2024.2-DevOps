@@ -4,10 +4,6 @@ import os
 import datetime
 import logging
 
-from click import command
-from libnvme.nvme import host_iter
-from twisted.spread.pb import portno
-
 # logging.disable(logging.CRITICAL)
 
 if logging.getLogger().isEnabledFor(logging.CRITICAL):
