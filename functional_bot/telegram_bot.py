@@ -666,14 +666,14 @@ class TelegramBot:
             try:
                 logger.info(line)
                 template = re.compile(
-                        fr'^({year})-({month})-({day})'
+                        fr'^({year})'
                         )
                 line = template.search(line)
-                logging.debug(line.groups())
+                logging.info(line.groups())
                 gps = line.groups()
                 lst, line = gps[0:-1:1], gps[-1]
-                logger.info(lst)
-                logger.info(line)
+                # logger.info(lst)
+                # logger.info(line)
                 tpl = tuple(lst)
                 if tpl not in main_info:
                     main_info.add(tpl)
