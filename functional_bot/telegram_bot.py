@@ -655,11 +655,12 @@ class TelegramBot:
         username = 'DB_USER'
         password = 'DB_PASSWORD'
         command = "cat /var/log/postgresql/postgresql-15-main.log"
-        data = self.getHostInfo(host, port, username, password, command)
+        data = self.getHostInfo(host, port, username, password, command).split('\n')
+
         dt = datetime.datetime.now()
         year, month, day = dt.year, dt.strftime("%b"), dt.day
         main_info = set()
-        logger.info([data])
+
         for line in data:
             line = line.strip()
             try:
