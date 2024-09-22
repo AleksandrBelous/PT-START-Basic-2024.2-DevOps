@@ -664,14 +664,12 @@ class TelegramBot:
         for line in data:
             line = line.strip()
             try:
-                logger.info(line)
                 template = re.compile(fr'^({dt})\s([0-9:]+)(.*)')
                 line = template.search(line)
-                logging.info(line.groups())
                 gps = line.groups()
                 lst, line = gps[0:-1:1], gps[-1]
-                # logger.info(lst)
-                # logger.info(line)
+                logger.info(lst)
+                logger.info(line)
                 tpl = tuple(lst)
                 if tpl not in main_info:
                     main_info.add(tpl)
