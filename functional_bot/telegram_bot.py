@@ -663,7 +663,7 @@ class TelegramBot:
         for line in data:
             line = line.strip()
             try:
-                template = re.compile(fr'^({date})\s([0-9:]+)(.*)')
+                template = re.compile(fr'^({date})\s([0-9:.]+)(.*)')
                 line = template.search(line)
                 groups = line.groups()
                 info, line = list(groups[0:-1:1]), groups[-1]
