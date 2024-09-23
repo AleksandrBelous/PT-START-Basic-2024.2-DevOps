@@ -629,6 +629,8 @@ class TelegramBot:
         password = os.getenv(password)
         logger.info('Get PASSWORD')
 
+        logger.info(f'command = {command}')
+
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(hostname=host, username=username, password=password, port=int(port))
