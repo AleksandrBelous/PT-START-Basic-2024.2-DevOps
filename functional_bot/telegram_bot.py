@@ -450,18 +450,18 @@ class TelegramBot:
             update.message.reply_text('Email-адреса не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
         self.emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
-        update.message.reply_text(self.emails, reply_markup=self.keyboard_menu_cancel()
+        update.message.reply_text(self.emails, reply_markup=self.keyboard_add_db_Emails()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findEmails.__name__}')
-        return self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
+        return  # self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
 
-    def add_db_Emails_keyboard(self, update: Update, context):
-        logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
-        update.message.reply_text('Выберете действие: ',
-                                  reply_markup=self.keyboard_add_db_Emails()
-                                  # Кнопка для отмены поиска
-                                  )
-        logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
+    # def add_db_Emails_keyboard(self, update: Update, context):
+    #     logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
+    #     update.message.reply_text('Выберете действие: ',
+    #                               reply_markup=self.keyboard_add_db_Emails()
+    #                               # Кнопка для отмены поиска
+    #                               )
+    #     logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
 
     def command_Add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Emails.__name__}')
@@ -877,10 +877,10 @@ class TelegramBot:
                                              self.commands.findEmails.callback
                                              )],
                 states={
-                        self.commands.findEmails.state_point   : [
+                        self.commands.findEmails.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.findEmails)],
-                        self.commands.add_db_Emails.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails_keyboard)],
+                        # self.commands.add_db_Emails.state_point: [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails_keyboard)],
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
