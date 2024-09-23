@@ -556,7 +556,7 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for phone in self.phones.split('\n'):
-                logger.info(f'will insert {phone.split(' ')[-1]}')
+                logger.info(f'will insert {phone.split(' ')[1::]}')
                 cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone.split(' ')[-1]}');")
             connection.commit()
             update.message.reply_text(
@@ -637,7 +637,7 @@ class TelegramBot:
             logger.info(f'Start {self.general_TG_Output.__name__} && {host_command}')
         else:
             logger.info(f'Start {self.general_TG_Output.__name__} && {output_text[:100]}')
-        data = self.getHostInfo(host_command) if host_command else output_text
+        data = self.getHostInfo(command=host_command) if host_command else output_text
         try:
             update.message.reply_text(data, reply_markup=self.keyboard_menu_main())
         except BadRequest as e:
@@ -693,7 +693,7 @@ class TelegramBot:
 
     def command_GetCritical(self, update: Update, context):
         logger.info(f'Start {self.command_GetCritical.__name__}')
-        text = self.getHostInfo("journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
+        text = self.getHostInfo(command="journalctl -p crit -n 5 | grep -E '^[A-Za-z]{3} [0-9]{2}'")
         text = re.sub(r'nautilus', r'ptstart', text)
         self.general_TG_Output(update, context, None, text)
         logger.info(f'Stop {self.command_GetCritical.__name__}')
@@ -717,7 +717,7 @@ class TelegramBot:
     # Команда для получения списка всех установленных пакетов
     def get_apt_list(self):
         logger.info(f'Start {self.get_apt_list.__name__}')
-        text = self.getHostInfo("dpkg -l | cat")
+        text = self.getHostInfo(command="dpkg -l | cat")
         text = re.compile(r'ii\s\s([a-z:.0-9-]+)\s').findall(text)
         logger.info(f'Stop {self.get_apt_list.__name__}')
         return ', '.join(text)
