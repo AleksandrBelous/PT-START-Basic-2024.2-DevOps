@@ -667,11 +667,17 @@ class TelegramBot:
                 template = re.compile(fr'^({date})\s([0-9:]+)(.*)')
                 line = template.search(line)
                 groups = line.groups()
-                lst, line = list(groups[0:-1:1]), groups[-1]
-                logger.info(lst)
-                logger.info(line)
-
-                tpl = tuple(lst)
+                info, line = list(groups[0:-1:1]), groups[-1]
+                # logger.info(info)
+                # logger.info(line)
+                if re.compile(r'connection received').search(line):
+                    logger.info(info)
+                    logger.info(line)
+                    host, port = re.compile(r'host=([0-9:.]+)\sport=([0-9]+)').search(line).groups()
+                    info.append(host)
+                    info.append(port)
+                    logger.info(info)
+                tpl = tuple(info)
                 if tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
