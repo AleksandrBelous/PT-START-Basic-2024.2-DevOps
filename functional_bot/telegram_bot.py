@@ -671,11 +671,18 @@ class TelegramBot:
                 # logger.info(info)
                 # logger.info(line)
                 if re.compile(r'connection received').search(line):
-                    logger.info(info)
-                    logger.info(line)
+                    # logger.info(info)
+                    # logger.info(line)
                     host, port = re.compile(r'host=([0-9:.]+)\sport=([0-9]+)').search(line).groups()
                     info.append(host)
                     info.append(port)
+                    # logger.info(info)
+                elif re.compile(r'connection authenticated').search(line):
+                    logger.info(info)
+                    logger.info(line)
+                    identity, method = re.compile(r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)').search(line).groups()
+                    info.append(identity)
+                    info.append(method)
                     logger.info(info)
                 tpl = tuple(info)
                 if tpl not in main_info:
