@@ -657,17 +657,17 @@ class TelegramBot:
         command = "cat /var/log/postgresql/postgresql-15-main.log"
         data = self.getHostInfo(host, port, username, password, command).split('\n')
 
-        dt = datetime.datetime.now().strftime("%Y-%m-%d")
-        # year, month, day = dt.year, dt.month, dt.day
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # year, month, day = date.year, date.month, date.day
         main_info = set()
 
         for line in data:
             line = line.strip()
             try:
-                template = re.compile(fr'^({dt})\s([0-9:]+)(.*)')
+                template = re.compile(fr'^({date})\s([0-9:]+)(.*)')
                 line = template.search(line)
-                gps = line.groups()
-                lst, line = gps[0:-1:1], gps[-1]
+                groups = line.groups()
+                lst, line = groups[0:-1:1], groups[-1]
                 logger.info(lst)
                 logger.info(line)
                 tpl = tuple(lst)
