@@ -455,13 +455,13 @@ class TelegramBot:
         logger.info(f'Stop {self.findEmails.__name__}')
         return  # self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
 
-    # def add_db_Emails_keyboard(self, update: Update, context):
-    #     logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
-    #     update.message.reply_text('Выберете действие: ',
-    #                               reply_markup=self.keyboard_add_db_Emails()
-    #                               # Кнопка для отмены поиска
-    #                               )
-    #     logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
+    def add_db_Emails_keyboard(self, update: Update, context):
+        logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
+        update.message.reply_text('Выберете действие: ',
+                                  reply_markup=self.keyboard_add_db_Emails()
+                                  # Кнопка для отмены поиска
+                                  )
+        logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
 
     def command_Add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Emails.__name__}')
