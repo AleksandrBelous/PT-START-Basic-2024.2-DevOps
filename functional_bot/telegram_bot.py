@@ -674,7 +674,7 @@ class TelegramBot:
                     # logger.info(line)
                     host, port = re.compile(r'host=([0-9:.]+)\sport=([0-9]+)').search(line).groups()
                     if host and port:
-                        info.append('received')
+                        info.append('received'.upper())
                         info.append(host)
                         info.append(port)
                         logger.info(info)
@@ -685,19 +685,18 @@ class TelegramBot:
                             r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)'
                             ).search(line).groups()
                     if identity and method:
-                        info.append('authenticated')
+                        info.append('authenticated'.upper())
                         info.append(identity)
                         info.append(method)
                         logger.info(info)
                 elif re.compile(r'connection authorized').search(line):
-                    logger.info('connection authorized')
                     # logger.info(info)
                     # logger.info(line)
                     user, application_name = re.compile(
                             r'user=([0-9a-zA-Z_-]+)\sapplication_name=([/0-9a-zA-Z_-]+)'
                             ).search(line).groups()
                     if user and application_name:
-                        info.append('authorized')
+                        info.append('authorized'.upper())
                         info.append(user)
                         info.append(application_name)
                         logger.info(info)
@@ -706,7 +705,7 @@ class TelegramBot:
                     # logger.info(line)
                     command = re.compile(r'received replication command:\s(.*)').search(line).groups()[0]
                     if command:
-                        info.append('command')
+                        info.append('command'.upper())
                         info.append(command)
                         logger.info(info)
                 elif re.compile(r'disconnection').search(line):
@@ -716,7 +715,7 @@ class TelegramBot:
                             r'time:\s([0-9:.]+)\suser=([0-9a-zA-Z_-]+)\s.*\shost=([0-9:.]+)\sport=([0-9]+)'
                             ).search(line).groups()
                     if command:
-                        info.append('disconnection')
+                        info.append('disconnection'.upper())
                         info.append(time)
                         info.append(user)
                         info.append(host)
