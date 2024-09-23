@@ -865,17 +865,20 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Emails
-        dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
-                                             self.commands.add_db_Emails.callback
-                                             )],
-                states={
-                        self.commands.add_db_Emails.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Emails.callback)],
-                        },
-                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-                )
-                )
+        CommandHandler(self.commands.add_db_Emails.commands,
+                       self.commands.add_db_Emails.callback
+                       )
+        # dp.add_handler(ConversationHandler(
+        #         entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
+        #                                      self.commands.add_db_Emails.callback
+        #                                      )],
+        #         states={
+        #                 self.commands.add_db_Emails.state_point: [
+        #                         MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Emails.callback)],
+        #                 },
+        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+        #         )
+        #         )
 
         # Обработчик команды /findPhoneNumbers
         dp.add_handler(ConversationHandler(
@@ -891,17 +894,20 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Phones
-        dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
-                                             self.commands.add_db_Phones.callback
-                                             )],
-                states={
-                        self.commands.add_db_Phones.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Phones.callback)],
-                        },
-                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-                )
-                )
+        CommandHandler(self.commands.add_db_Phones.command,
+                       self.commands.add_db_Phones.callback
+                       )
+        # dp.add_handler(ConversationHandler(
+        #         entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
+        #                                      self.commands.add_db_Phones.callback
+        #                                      )],
+        #         states={
+        #                 self.commands.add_db_Phones.state_point: [
+        #                         MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Phones.callback)],
+        #                 },
+        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+        #         )
+        #         )
 
         # Обработчик команды /verifyPassword
         dp.add_handler(ConversationHandler(
