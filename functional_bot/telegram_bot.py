@@ -526,9 +526,12 @@ class TelegramBot:
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
         self.phones = '\n'.join(
+                [f'{phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
+                )
+        phones = '\n'.join(
                 [f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
                 )
-        update.message.reply_text(self.phones, reply_markup=self.keyboard_add_db_Phones()
+        update.message.reply_text(phones, reply_markup=self.keyboard_add_db_Phones()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
@@ -556,8 +559,8 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for phone in self.phones.split('\n'):
-                logger.info(f'will insert {phone.split(' ')[1::]}')
-                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone.split(' ')[-1]}');")
+                logger.info(f'will insert {phone}')
+                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
             connection.commit()
             update.message.reply_text(
                     f'Данные успешно добавлены в БД',
