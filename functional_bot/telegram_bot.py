@@ -478,7 +478,7 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for mail in self.emails.split('\n'):
-                # logger.info(f'will insert {mail.split(' ')[-1]}')
+                logger.info(f'will insert {mail.split(' ')[-1]}')
                 cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail.split(' ')[-1]}');")
             connection.commit()
             update.message.reply_text(
@@ -494,7 +494,7 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Emails.__name__}')
-        return  # ConversationHandler.END
+        return ConversationHandler.END
 
     def command_FindPhoneNumbers(self, update: Update, context):
         """
@@ -556,7 +556,7 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for phone in self.phones.split('\n'):
-                # logger.info(f'will insert {phone.split(' ')[-1]}')
+                logger.info(f'will insert {phone.split(' ')[-1]}')
                 cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone.split(' ')[-1]}');")
             connection.commit()
             update.message.reply_text(
@@ -572,7 +572,7 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
-        return  # ConversationHandler.END
+        return ConversationHandler.END
 
     def command_VerifyPassword(self, update: Update, context):
         """
