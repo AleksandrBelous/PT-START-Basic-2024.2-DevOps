@@ -525,10 +525,10 @@ class TelegramBot:
         if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
-        phoneNumbers = '\n'.join(
+        self.phones = '\n'.join(
                 [f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
                 )
-        update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_add_db_Phones()
+        update.message.reply_text(self.phones, reply_markup=self.keyboard_add_db_Phones()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
