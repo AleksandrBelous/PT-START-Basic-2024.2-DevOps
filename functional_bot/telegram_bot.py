@@ -455,14 +455,6 @@ class TelegramBot:
         logger.info(f'Stop {self.findEmails.__name__}')
         return  # self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
 
-    # def add_db_Emails_keyboard(self, update: Update, context):
-    #     logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
-    #     update.message.reply_text('Выберете действие: ',
-    #                               reply_markup=self.keyboard_add_db_Emails()
-    #                               # Кнопка для отмены поиска
-    #                               )
-    #     logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
-
     def command_Add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Emails.__name__}')
         host = os.getenv('DB_HOST')
@@ -486,8 +478,8 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for mail in self.emails.split('\n'):
-                logger.info(f'will insert {mail}')
-                cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
+                # logger.info(f'will insert {mail.split(' ')[-1]}')
+                cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail.split(' ')[-1]}');")
             connection.commit()
             update.message.reply_text(
                     f'Данные успешно добавлены в БД',
@@ -568,8 +560,8 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for phone in self.phones.split('\n'):
-                logger.info(f'will insert {phone}')
-                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
+                # logger.info(f'will insert {phone.split(' ')[-1]}')
+                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone.split(' ')[-1]}');")
             connection.commit()
             update.message.reply_text(
                     f'Данные успешно добавлены в БД',
@@ -584,6 +576,7 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
+        return
 
     def command_VerifyPassword(self, update: Update, context):
         """
@@ -887,15 +880,11 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Emails
-
         dp.add_handler(ConversationHandler(
                 entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
                                              self.commands.add_db_Emails.callback
                                              )],
-                states={
-                        # self.commands.add_db_Emails.state_point: [
-                        #         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
-                        },
+                states={ },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
@@ -914,21 +903,14 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Phones
-        CommandHandler(self.commands.add_db_Phones.command,
-                       self.commands.add_db_Phones.callback
-                       )
-
-        # dp.add_handler(ConversationHandler(
-        #         entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
-        #                                      self.commands.add_db_Phones.callback
-        #                                      )],
-        #         states={
-        #                 self.commands.add_db_Phones.state_point: [
-        #                         MessageHandler(Filters.text & ~Filters.command, self.add_db_Phones)],
-        #                 },
-        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-        #         )
-        #         )
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
+                                             self.commands.add_db_Phones.callback
+                                             )],
+                states={ },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
 
         # Обработчик команды /verifyPassword
         dp.add_handler(ConversationHandler(
