@@ -824,7 +824,6 @@ class TelegramBot:
                         info.append(host)
                         info.append(port)
                         logger.info(info)
-                logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
                     main_info.add(tpl)
@@ -832,7 +831,7 @@ class TelegramBot:
                 continue
 
         main_info = list('\t'.join(tpl) for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])))
-
+        logger.info(main_info)
         self.general_TG_Output(update, context, None, '\n'.join(main_info))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
 
