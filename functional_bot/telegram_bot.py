@@ -759,12 +759,8 @@ class TelegramBot:
 
     def command_GetReplLogs(self, update: Update, context):
         logger.info(f'Start {self.command_GetReplLogs.__name__}')
-        host = 'DB_HOST'
-        port = 'DB_PORT'
-        username = 'DB_USER'
-        password = 'DB_PASSWORD'
         command = "cat /var/log/postgresql/postgresql-15-main.log"
-        data = self.getHostInfo(host, port, username, password, command).split('\n')
+        data = self.getHostInfo(command).split('\n')
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         main_info = set()
