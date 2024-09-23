@@ -689,7 +689,7 @@ class TelegramBot:
                         info.append(method)
                         logger.info(info)
                 tpl = tuple(info)
-                if tpl not in main_info:
+                if len(tpl) > 2 and tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
                 continue
