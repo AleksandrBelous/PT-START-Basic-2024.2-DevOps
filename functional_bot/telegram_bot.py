@@ -694,7 +694,7 @@ class TelegramBot:
                     logger.info(info)
                     logger.info(line)
                     user, application_name = re.compile(
-                            r'user="([0-9a-zA-Z_-]+)"\sapplication_name=([0-9a-zA-Z_-]+)'
+                            r'user=([0-9a-zA-Z_-]+)\sapplication_name=([/0-9a-zA-Z_-]+)'
                             ).search(line).groups()
                     info.append(user)
                     info.append(application_name)
