@@ -667,11 +667,11 @@ class TelegramBot:
                 template = re.compile(fr'^({date})\s([0-9:]+)(.*)')
                 line = template.search(line)
                 groups = line.groups()
-                lst, line = groups[0:-1:1], groups[-1]
+                lst, line = list(groups[0:-1:1]), groups[-1]
                 logger.info(lst)
                 logger.info(line)
-                tpl = tuple(lst)
 
+                tpl = tuple(lst)
                 if tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
