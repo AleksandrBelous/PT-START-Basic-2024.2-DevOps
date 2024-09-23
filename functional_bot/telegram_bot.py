@@ -42,6 +42,9 @@ class TelegramBot:
         self.__chat_id = os.getenv('CHAT_ID')
         logger.info('Get CHAT_ID')
 
+        self.emails = None
+        self.phones = None
+
         self.commands = DotDict(
                 {
                         'start'             : DotDict(
@@ -372,7 +375,6 @@ class TelegramBot:
 
     def command_Help(self, update: Update, context):
         logger.info(f'Start {self.command_Help.__name__}')
-
         text = (
                 "В боте реализован функционал поиска необходимой информации и вывода её пользователю.\n"
 
@@ -424,7 +426,6 @@ class TelegramBot:
                 "Сбор логов о репликации из /var/log/postgresql/.\n"
                 "Команда: /get_repl_logs\n"
         )
-
         update.message.reply_text(text, reply_markup=self.keyboard_menu_main())
         logger.info(f'Stop {self.command_Help.__name__}')
 
@@ -443,28 +444,33 @@ class TelegramBot:
     def findEmails(self, update: Update, context):
         logger.info(f'Start {self.findEmails.__name__}')
         user_input = update.message.text  # Получаем текст, содержащий (или нет) email-адреса
-
         emailsRegex = re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,3}')  # формат email-адресов
-
         emailsList = emailsRegex.findall(user_input)  # Ищем номера телефонов
-
         if not emailsList:  # Обрабатываем случай, когда номеров телефонов нет
             update.message.reply_text('Email-адреса не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
-
-        emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
-
-        update.message.reply_text(emails, reply_markup=self.keyboard_menu_cancel())  # Отправляем сообщение пользователю
-
+        self.emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
+        update.message.reply_text(self.emails, reply_markup=self.keyboard_menu_cancel()
+                                  )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findEmails.__name__}')
-        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
+        return self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
 
-    def add_db_Emails(self, update: Update, context):
-        logger.info(f'Start {self.add_db_Emails.__name__}')
+    def add_db_Emails_keyboard(self, update: Update, context):
+        logger.info(f'Start {self.add_db_Emails_keyboard.__name__}')
         update.message.reply_text('Выберете действие: ',
                                   reply_markup=self.keyboard_add_db_Emails()
                                   # Кнопка для отмены поиска
                                   )
+        logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
+
+    def command_add_db_Emails(self, update: Update, context):
+        logger.info(f'Start {self.command_add_db_Emails.__name__}')
+        ...
+        logger.info(f'Stop {self.command_add_db_Emails.__name__}')
+
+    def add_db_Emails(self, update: Update, context):
+        logger.info(f'Start {self.add_db_Emails.__name__}')
+        ...
         logger.info(f'Stop {self.add_db_Emails.__name__}')
 
     def command_FindPhoneNumbers(self, update: Update, context):
@@ -507,7 +513,7 @@ class TelegramBot:
                                   )  # Отправляем сообщение пользователю
 
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
-        return self.commands.add_db_Emails.state_point  # ConversationHandler.END  # Завершаем работу обработчика диалога
+        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def add_db_Phones(self):
         ...
@@ -807,6 +813,19 @@ class TelegramBot:
                         self.commands.findEmails.state_point   : [
                                 MessageHandler(Filters.text & ~Filters.command, self.findEmails)],
                         self.commands.add_db_Emails.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails_keyboard)],
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
+
+        # Обработчик команды /add_db_Emails
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
+                                             self.commands.add_db_Emails.callback
+                                             )],
+                states={
+                        self.commands.add_db_Emails.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
@@ -821,6 +840,19 @@ class TelegramBot:
                 states={
                         self.commands.findPhoneNumbers.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.findPhoneNumbers)],
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
+
+        # Обработчик команды /add_db_Phones
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
+                                             self.commands.add_db_Phones.callback
+                                             )],
+                states={
+                        self.commands.add_db_Phones.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Phones)],
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
