@@ -705,7 +705,7 @@ class TelegramBot:
                     logger.info('received replication command')
                     # logger.info(info)
                     # logger.info(line)
-                    command = re.compile(r'received replication command:\s([/\s0-9a-zA-Z_-]+)').search(line).group()
+                    command = re.compile(r'received replication command:\s(.*)').search(line).group()
                     if command:
                         info.append('command')
                         info.append(command)
