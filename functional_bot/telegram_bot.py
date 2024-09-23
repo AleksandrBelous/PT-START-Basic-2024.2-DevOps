@@ -887,18 +887,18 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Emails
-        CommandHandler(self.commands.add_db_Emails.command,
-                       self.commands.add_db_Emails.callback
-                       ),
-        # dp.add_handler(ConversationHandler(
-        #         entry_points=[
-        #         states={
-        #                 self.commands.add_db_Emails.state_point: [
-        #                         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
-        #                 },
-        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-        #         )
-        #         )
+
+        dp.add_handler(ConversationHandler(
+                entry_points=[CommandHandler(self.commands.add_db_Emails.command,
+                                             self.commands.add_db_Emails.callback
+                                             )],
+                states={
+                        self.commands.add_db_Emails.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
+                        },
+                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+                )
+                )
 
         # Обработчик команды /findPhoneNumbers
         dp.add_handler(ConversationHandler(
