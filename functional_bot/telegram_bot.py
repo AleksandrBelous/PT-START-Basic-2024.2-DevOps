@@ -824,6 +824,7 @@ class TelegramBot:
                         info.append(host)
                         info.append(port)
                         logger.info(info)
+                logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
                     main_info.add(tpl)
