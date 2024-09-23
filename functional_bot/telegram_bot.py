@@ -761,6 +761,7 @@ class TelegramBot:
         logger.info(f'Start {self.command_GetReplLogs.__name__}')
         command = "cat /var/log/postgresql/postgresql-15-main.log"
         data = self.getHostInfo(command).split('\n')
+        logger.info(data)
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         main_info = set()
