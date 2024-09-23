@@ -481,7 +481,7 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for mail in self.emails.split('\n'):
-                logger.info(f'will insert {mail}')
+                # logger.info(f'will insert {mail}')
                 cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
             connection.commit()
             update.message.reply_text(
@@ -562,7 +562,7 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for phone in self.phones.split('\n'):
-                logger.info(f'will insert {phone}')
+                # logger.info(f'will insert {phone}')
                 cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
             connection.commit()
             update.message.reply_text(
