@@ -612,34 +612,23 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getHostInfo(self, host='RM_HOST', port='RM_PORT', username='RM_USER', password='RM_PASSWORD',
-                    command="uname -a"
-                    ):
+    def getHostInfo(self, host='RM_HOST', port='RM_PORT', username='RM_USER', password='RM_PASSWORD', command="uname"):
         logger.info(f"Start {self.getHostInfo.__name__}")
-
         host = os.getenv(host)
         logger.info('Get HOST')
-
         port = os.getenv(port)
         logger.info('Get PORT')
-
         username = os.getenv(username)
         logger.info('Get USER')
-
         password = os.getenv(password)
         logger.info('Get PASSWORD')
-
-        logger.info(f'command = {command}')
-
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client.connect(hostname=host, username=username, password=password, port=int(port))
-
         stdin, stdout, stderr = client.exec_command(command)
         data = stdout.read() + stderr.read()
         client.close()
         data = str(data).replace('\\n', '\n').replace('\\t', '\t')[2:-1]
-
         logger.info(f"Stop {self.getHostInfo.__name__}")
         return data
 
@@ -762,8 +751,7 @@ class TelegramBot:
     def command_GetReplLogs(self, update: Update, context):
         logger.info(f'Start {self.command_GetReplLogs.__name__}')
         command = "cat /var/log/postgresql/postgresql-15-main.log"
-        data = self.getHostInfo(command).split('\n')
-        logger.info(data)
+        data = self.getHostInfo(command=command).split('\n')
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
         main_info = set()
@@ -826,7 +814,7 @@ class TelegramBot:
                         info.append(user)
                         info.append(host)
                         info.append(port)
-                        logger.info(info)
+                        # logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
                     main_info.add(tpl)
@@ -834,7 +822,7 @@ class TelegramBot:
                 continue
 
         main_info = list('\t'.join(tpl) for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])))
-        logger.info(main_info)
+        # logger.info(main_info)
         self.general_TG_Output(update, context, None, '\n'.join(main_info))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
 
