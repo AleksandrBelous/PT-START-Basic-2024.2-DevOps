@@ -465,7 +465,38 @@ class TelegramBot:
 
     def command_add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.command_add_db_Emails.__name__}')
-        ...
+        host = os.getenv('DB_HOST')
+        logger.info('Get DB_HOST')
+        port = os.getenv('DB_PORT')
+        logger.info('Get DB_PORT')
+        username = os.getenv('DB_USER')
+        logger.info('Get DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        logger.info('Get DB_PASSWORD')
+        database = os.getenv('DB_DATABASE')
+        logger.info('Get DB_DATABASE')
+        connection = None
+        try:
+            connection = psycopg2.connect(user=username,
+                                          password=password,
+                                          host=host,
+                                          port=port,
+                                          database=database
+                                          )
+
+            cursor = connection.cursor()
+            for mail in self.emails:
+                logger.info(f'will insert {mail}')
+                cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
+            connection.commit()
+            logging.info("Команда успешно выполнена")
+        except (Exception, psycopg2.Error) as error:
+            logging.error(f"Ошибка при работе с PostgreSQL: {error}")
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+                logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_add_db_Emails.__name__}')
 
     def add_db_Emails(self, update: Update, context):
