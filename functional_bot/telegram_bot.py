@@ -511,16 +511,16 @@ class TelegramBot:
         logger.info(f"Start {self.getHostInfo.__name__}")
 
         host = os.getenv(host)
-        logger.info('Get RM_HOST')
+        logger.info('Get HOST')
 
         port = os.getenv(port)
-        logger.info('Get RM_PORT')
+        logger.info('Get PORT')
 
         username = os.getenv(username)
-        logger.info('Get RM_USER')
+        logger.info('Get USER')
 
         password = os.getenv(password)
-        logger.info('Get RM_PASSWORD')
+        logger.info('Get PASSWORD')
 
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
