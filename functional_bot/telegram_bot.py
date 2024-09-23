@@ -505,20 +505,22 @@ class TelegramBot:
         logger.info(f'Stop {self.verifyPassword.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def getHostInfo(self, host='HOST', port='PORT', username='USER', password='PASSWORD', command="uname -a"):
+    def getHostInfo(self, host='RM_HOST', port='RM_PORT', username='RM_USER', password='RM_PASSWORD',
+                    command="uname -a"
+                    ):
         logger.info(f"Start {self.getHostInfo.__name__}")
 
         host = os.getenv(host)
-        logger.info('Get HOST')
+        logger.info('Get RM_HOST')
 
         port = os.getenv(port)
-        logger.info('Get PORT')
+        logger.info('Get RM_PORT')
 
         username = os.getenv(username)
-        logger.info('Get USER')
+        logger.info('Get RM_USER')
 
         password = os.getenv(password)
-        logger.info('Get PASSWORD')
+        logger.info('Get RM_PASSWORD')
 
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
