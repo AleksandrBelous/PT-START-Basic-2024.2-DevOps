@@ -528,7 +528,7 @@ class TelegramBot:
         phoneNumbers = '\n'.join(
                 [f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
                 )
-        update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_menu_cancel()
+        update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_add_db_Phones()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
