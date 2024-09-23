@@ -463,8 +463,8 @@ class TelegramBot:
                                   )
         logger.info(f'Stop {self.add_db_Emails_keyboard.__name__}')
 
-    def command_add_db_Emails(self, update: Update, context):
-        logger.info(f'Start {self.command_add_db_Emails.__name__}')
+    def command_Add_db_Emails(self, update: Update, context):
+        logger.info(f'Start {self.command_Add_db_Emails.__name__}')
         host = os.getenv('DB_HOST')
         logger.info('Get DB_HOST')
         port = os.getenv('DB_PORT')
@@ -497,15 +497,15 @@ class TelegramBot:
                 cursor.close()
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
-        logger.info(f'Stop {self.command_add_db_Emails.__name__}')
+        logger.info(f'Stop {self.command_Add_db_Emails.__name__}')
 
     def add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.add_db_Emails.__name__}')
         ...
         logger.info(f'Stop {self.add_db_Emails.__name__}')
 
-    def command_add_db_Phones(self, update: Update, context):
-        logger.info(f'Start {self.command_add_db_Emails.__name__}')
+    def command_Add_db_Phones(self, update: Update, context):
+        logger.info(f'Start {self.command_Add_db_Phones.__name__}')
         host = os.getenv('DB_HOST')
         logger.info('Get DB_HOST')
         port = os.getenv('DB_PORT')
@@ -538,7 +538,7 @@ class TelegramBot:
                 cursor.close()
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
-        logger.info(f'Stop {self.command_add_db_Emails.__name__}')
+        logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
 
     def command_FindPhoneNumbers(self, update: Update, context):
         """
