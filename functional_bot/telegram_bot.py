@@ -454,7 +454,7 @@ class TelegramBot:
         update.message.reply_text(emails, reply_markup=self.keyboard_add_db_Emails()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findEmails.__name__}')
-        return  # self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
+        return ConversationHandler.END  # self.commands.add_db_Emails.state_point # Завершаем работу обработчика диалога
 
     def command_Add_db_Emails(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Emails.__name__}')
@@ -535,7 +535,7 @@ class TelegramBot:
         update.message.reply_text(phones, reply_markup=self.keyboard_add_db_Phones()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
-        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
+        return ConversationHandler.END  # Завершаем работу обработчика диалога
 
     def command_Add_db_Phones(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Phones.__name__}')
