@@ -702,13 +702,25 @@ class TelegramBot:
                         info.append(application_name)
                         logger.info(info)
                 elif re.compile(r'received replication command').search(line):
-                    logger.info('received replication command')
                     # logger.info(info)
                     # logger.info(line)
                     command = re.compile(r'received replication command:\s(.*)').search(line).group()
                     if command:
                         info.append('command')
                         info.append(command)
+                        logger.info(info)
+                elif re.compile(r'disconnection').search(line):
+                    # logger.info(info)
+                    # logger.info(line)
+                    time, user, host, port = re.compile(
+                            r'time:\s([0-9:.]+)\suser=([0-9a-zA-Z_-]+)\s.*\shost=([0-9:.]+)\sport=([0-9]+)'
+                            ).search(line).groups()
+                    if command:
+                        info.append('disconnection')
+                        info.append(time)
+                        info.append(user)
+                        info.append(host)
+                        info.append(port)
                         logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
