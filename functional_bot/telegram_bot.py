@@ -727,7 +727,7 @@ class TelegramBot:
             except AttributeError:
                 continue
 
-        main_info = list(' '.join(tpl) for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])))
+        main_info = list('\t'.join(tpl) for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])))
 
         self.general_TG_Output(update, context, None, '\n'.join(main_info))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
