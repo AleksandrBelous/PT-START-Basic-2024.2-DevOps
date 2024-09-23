@@ -714,7 +714,7 @@ class TelegramBot:
                     time, user, host, port = re.compile(
                             r'time:\s([0-9:.]+)\suser=([0-9a-zA-Z_-]+)\s.*\shost=([0-9:.]+)\sport=([0-9]+)'
                             ).search(line).groups()
-                    if command:
+                    if time and user and host and port:
                         info.append('disconnection'.upper())
                         info.append(time)
                         info.append(user)
