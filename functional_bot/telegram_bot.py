@@ -892,10 +892,10 @@ class TelegramBot:
                 entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
                                              self.commands.add_db_Emails.callback
                                              )],
-                # states={
-                #         self.commands.add_db_Emails.state_point: [
-                #                 MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
-                #         },
+                states={
+                        # self.commands.add_db_Emails.state_point: [
+                        #         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
+                        },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
