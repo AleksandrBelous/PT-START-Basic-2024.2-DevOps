@@ -889,7 +889,7 @@ class TelegramBot:
         # Обработчик команды /add_db_Emails
 
         dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.add_db_Emails.command,
+                entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
                                              self.commands.add_db_Emails.callback
                                              )],
                 # states={
