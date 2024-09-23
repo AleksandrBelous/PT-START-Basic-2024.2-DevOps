@@ -449,8 +449,9 @@ class TelegramBot:
         if not emailsList:  # Обрабатываем случай, когда номеров телефонов нет
             update.message.reply_text('Email-адреса не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
-        self.emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
-        update.message.reply_text(self.emails, reply_markup=self.keyboard_add_db_Emails()
+        self.emails = '\n'.join([f'{emailsList[i]}' for i in range(len(emailsList))])
+        emails = '\n'.join([f'{i + 1}. {emailsList[i]}' for i in range(len(emailsList))])
+        update.message.reply_text(emails, reply_markup=self.keyboard_add_db_Emails()
                                   )  # Отправляем сообщение пользователю
         logger.info(f'Stop {self.findEmails.__name__}')
         return  # self.commands.add_db_Emails.state_point  # ConversationHandler.END # Завершаем работу обработчика диалога
@@ -478,8 +479,8 @@ class TelegramBot:
 
             cursor = connection.cursor()
             for mail in self.emails.split('\n'):
-                logger.info(f'will insert {mail.split(' ')[-1]}')
-                cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail.split(' ')[-1]}');")
+                logger.info(f'will insert {mail}')
+                cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
             connection.commit()
             update.message.reply_text(
                     f'Данные успешно добавлены в БД',
@@ -868,7 +869,10 @@ class TelegramBot:
                 entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
                                              self.commands.add_db_Emails.callback
                                              )],
-                states={ },
+                states={
+                        self.commands.add_db_Emails.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Emails.callback)],
+                        },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
@@ -891,7 +895,10 @@ class TelegramBot:
                 entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
                                              self.commands.add_db_Phones.callback
                                              )],
-                states={ },
+                states={
+                        self.commands.add_db_Phones.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.commands.add_db_Phones.callback)],
+                        },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
                 )
@@ -943,7 +950,6 @@ class TelegramBot:
         dp.add_handler(CommandHandler(self.commands.getSS.command, self.commands.getSS.callback))
 
         # Обработчик команды /get_apt_list
-
         dp.add_handler(ConversationHandler(
                 entry_points=[
                         CommandHandler(self.commands.getAptList.state_point,
