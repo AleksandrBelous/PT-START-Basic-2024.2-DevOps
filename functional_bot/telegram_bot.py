@@ -485,7 +485,7 @@ class TelegramBot:
                                           )
 
             cursor = connection.cursor()
-            for mail in self.emails:
+            for mail in self.emails.split('\n'):
                 logger.info(f'will insert {mail}')
                 cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
             connection.commit()
@@ -502,11 +502,6 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Emails.__name__}')
-
-    def add_db_Emails(self, update: Update, context):
-        logger.info(f'Start {self.add_db_Emails.__name__}')
-        ...
-        logger.info(f'Stop {self.add_db_Emails.__name__}')
 
     def command_Add_db_Phones(self, update: Update, context):
         logger.info(f'Start {self.command_Add_db_Phones.__name__}')
@@ -530,7 +525,7 @@ class TelegramBot:
                                           )
 
             cursor = connection.cursor()
-            for phone in self.phones:
+            for phone in self.phones.split('\n'):
                 logger.info(f'will insert {phone}')
                 cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
             connection.commit()
