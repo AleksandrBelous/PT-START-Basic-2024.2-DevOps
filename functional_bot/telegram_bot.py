@@ -681,12 +681,24 @@ class TelegramBot:
                 elif re.compile(r'connection authenticated').search(line):
                     # logger.info(info)
                     # logger.info(line)
-                    identity, method = re.compile(r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)').search(line
-                                                                                                                  ).groups()
+                    identity, method = re.compile(
+                            r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)'
+                            ).search(line).groups()
                     if identity and method:
                         info.append('authenticated')
                         info.append(identity)
                         info.append(method)
+                        logger.info(info)
+                elif re.compile(r'connection authorized').search(line):
+                    # logger.info(info)
+                    # logger.info(line)
+                    user, application_name = re.compile(
+                            r'user="([0-9a-zA-Z_-]+)"\sapplication_name=([/0-9a-zA-Z_-]+)'
+                            ).search(line).groups()
+                    if user and application_name:
+                        info.append('authorized')
+                        info.append(user)
+                        info.append(application_name)
                         logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
@@ -694,7 +706,7 @@ class TelegramBot:
             except AttributeError:
                 continue
 
-        main_info = list(' '.join(tpl) for tpl in main_info)
+        main_info = list(' '.join(tpl) for tpl in sorted(main_info, key=lambda tpl: (tpl[1], tpl[2])))
 
         self.general_TG_Output(update, context, None, '\n'.join(main_info))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
