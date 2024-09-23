@@ -494,6 +494,7 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Emails.__name__}')
+        return ConversationHandler.END
 
     def command_FindPhoneNumbers(self, update: Update, context):
         """
@@ -576,7 +577,7 @@ class TelegramBot:
                 connection.close()
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
-        return
+        return ConversationHandler.END
 
     def command_VerifyPassword(self, update: Update, context):
         """
@@ -872,8 +873,6 @@ class TelegramBot:
                 states={
                         self.commands.findEmails.state_point: [
                                 MessageHandler(Filters.text & ~Filters.command, self.findEmails)],
-                        # self.commands.add_db_Emails.state_point: [
-                        #         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails_keyboard)],
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
