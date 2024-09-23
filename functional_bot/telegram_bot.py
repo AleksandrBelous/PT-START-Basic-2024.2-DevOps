@@ -503,42 +503,6 @@ class TelegramBot:
                 logging.info("Соединение с PostgreSQL закрыто")
         logger.info(f'Stop {self.command_Add_db_Emails.__name__}')
 
-    def command_Add_db_Phones(self, update: Update, context):
-        logger.info(f'Start {self.command_Add_db_Phones.__name__}')
-        host = os.getenv('DB_HOST')
-        logger.info('Get DB_HOST')
-        port = os.getenv('DB_PORT')
-        logger.info('Get DB_PORT')
-        username = os.getenv('DB_USER')
-        logger.info('Get DB_USER')
-        password = os.getenv('DB_PASSWORD')
-        logger.info('Get DB_PASSWORD')
-        database = os.getenv('DB_DATABASE')
-        logger.info('Get DB_DATABASE')
-        connection = None
-        try:
-            connection = psycopg2.connect(user=username,
-                                          password=password,
-                                          host=host,
-                                          port=port,
-                                          database=database
-                                          )
-
-            cursor = connection.cursor()
-            for phone in self.phones.split('\n'):
-                logger.info(f'will insert {phone}')
-                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
-            connection.commit()
-            logging.info("Команда успешно выполнена")
-        except (Exception, psycopg2.Error) as error:
-            logging.error(f"Ошибка при работе с PostgreSQL: {error}")
-        finally:
-            if connection:
-                cursor.close()
-                connection.close()
-                logging.info("Соединение с PostgreSQL закрыто")
-        logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
-
     def command_FindPhoneNumbers(self, update: Update, context):
         """
         Бот вывод список найденных номеров телефона
@@ -581,8 +545,45 @@ class TelegramBot:
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
-    def add_db_Phones(self):
-        ...
+    def command_Add_db_Phones(self, update: Update, context):
+        logger.info(f'Start {self.command_Add_db_Phones.__name__}')
+        host = os.getenv('DB_HOST')
+        logger.info('Get DB_HOST')
+        port = os.getenv('DB_PORT')
+        logger.info('Get DB_PORT')
+        username = os.getenv('DB_USER')
+        logger.info('Get DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        logger.info('Get DB_PASSWORD')
+        database = os.getenv('DB_DATABASE')
+        logger.info('Get DB_DATABASE')
+        connection = None
+        try:
+            connection = psycopg2.connect(user=username,
+                                          password=password,
+                                          host=host,
+                                          port=port,
+                                          database=database
+                                          )
+
+            cursor = connection.cursor()
+            for phone in self.phones.split('\n'):
+                logger.info(f'will insert {phone}')
+                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
+            connection.commit()
+            update.message.reply_text(
+                    f'Данные успешно добавлены в БД',
+                    reply_markup=self.keyboard_menu_main()  # Отправляем клавиатуру с кнопками
+                    )
+            logging.info("Команда успешно выполнена")
+        except (Exception, psycopg2.Error) as error:
+            logging.error(f"Ошибка при работе с PostgreSQL: {error}")
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+                logging.info("Соединение с PostgreSQL закрыто")
+        logger.info(f'Stop {self.command_Add_db_Phones.__name__}')
 
     def command_VerifyPassword(self, update: Update, context):
         """
@@ -886,17 +887,18 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Emails
-        dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.add_db_Emails.state_point,
-                                             self.commands.add_db_Emails.callback
-                                             )],
-                states={
-                        self.commands.add_db_Emails.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
-                        },
-                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-                )
-                )
+        CommandHandler(self.commands.add_db_Emails.command,
+                       self.commands.add_db_Emails.callback
+                       ),
+        # dp.add_handler(ConversationHandler(
+        #         entry_points=[
+        #         states={
+        #                 self.commands.add_db_Emails.state_point: [
+        #                         MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
+        #                 },
+        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+        #         )
+        #         )
 
         # Обработчик команды /findPhoneNumbers
         dp.add_handler(ConversationHandler(
@@ -912,17 +914,21 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Phones
-        dp.add_handler(ConversationHandler(
-                entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
-                                             self.commands.add_db_Phones.callback
-                                             )],
-                states={
-                        self.commands.add_db_Phones.state_point: [
-                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Phones)],
-                        },
-                fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
-                )
-                )
+        CommandHandler(self.commands.add_db_Phones.command,
+                       self.commands.add_db_Phones.callback
+                       )
+
+        # dp.add_handler(ConversationHandler(
+        #         entry_points=[CommandHandler(self.commands.add_db_Phones.state_point,
+        #                                      self.commands.add_db_Phones.callback
+        #                                      )],
+        #         states={
+        #                 self.commands.add_db_Phones.state_point: [
+        #                         MessageHandler(Filters.text & ~Filters.command, self.add_db_Phones)],
+        #                 },
+        #         fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
+        #         )
+        #         )
 
         # Обработчик команды /verifyPassword
         dp.add_handler(ConversationHandler(
