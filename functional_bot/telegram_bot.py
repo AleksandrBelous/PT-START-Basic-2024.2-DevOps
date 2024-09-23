@@ -86,12 +86,28 @@ class TelegramBot:
                                         'callback'   : self.command_FindEmails,
                                         }
                                 ),
+                        'add_db_Emails'     : DotDict(
+                                {
+                                        'command'    : 'add_db_emails',
+                                        'button'     : '/add_db_emails',
+                                        'state_point': 'add_db_emails',
+                                        'callback'   : self.command_Add_db_Emails,
+                                        }
+                                ),
                         'findPhoneNumbers'  : DotDict(
                                 {
                                         'command'    : 'find_phone_number',
                                         'button'     : '/find_phone_number',
                                         'state_point': 'find_phone_number',
                                         'callback'   : self.command_FindPhoneNumbers,
+                                        }
+                                ),
+                        'add_db_Phones'     : DotDict(
+                                {
+                                        'command'    : 'add_db_phones',
+                                        'button'     : '/add_db_phones',
+                                        'state_point': 'add_db_phones',
+                                        'callback'   : self.command_Add_db_Phones,
                                         }
                                 ),
 
@@ -314,6 +330,24 @@ class TelegramBot:
                         ], resize_keyboard=True
                 )
 
+    def keyboard_add_db_Emails(self):
+        logger.info(f'Start {self.keyboard_add_db_Emails.__name__}')
+        return ReplyKeyboardMarkup(
+                [
+                        [KeyboardButton(self.commands.add_db_Emails.button)],
+                        [KeyboardButton(self.commands.cancel.button)],
+                        ], resize_keyboard=True
+                )
+
+    def keyboard_add_db_Phones(self):
+        logger.info(f'Start {self.keyboard_add_db_Phones.__name__}')
+        return ReplyKeyboardMarkup(
+                [
+                        [KeyboardButton(self.commands.add_db_Phones.button)],
+                        [KeyboardButton(self.commands.cancel.button)],
+                        ], resize_keyboard=True
+                )
+
     def command_Start(self, update: Update = None, context=None):
         logger.info(f'Start {self.command_Start.__name__}')
         if update:
@@ -425,6 +459,14 @@ class TelegramBot:
         logger.info(f'Stop {self.findEmails.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
+    def add_db_Emails(self, update: Update, context):
+        logger.info(f'Start {self.add_db_Emails.__name__}')
+        update.message.reply_text('Выберете действие: ',
+                                  reply_markup=self.keyboard_add_db_Emails()
+                                  # Кнопка для отмены поиска
+                                  )
+        logger.info(f'Stop {self.add_db_Emails.__name__}')
+
     def command_FindPhoneNumbers(self, update: Update, context):
         """
         Бот вывод список найденных номеров телефона
@@ -465,7 +507,10 @@ class TelegramBot:
                                   )  # Отправляем сообщение пользователю
 
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
-        return  # ConversationHandler.END  # Завершаем работу обработчика диалога
+        return self.commands.add_db_Emails.state_point  # ConversationHandler.END  # Завершаем работу обработчика диалога
+
+    def add_db_Phones(self):
+        ...
 
     def command_VerifyPassword(self, update: Update, context):
         """
@@ -759,8 +804,10 @@ class TelegramBot:
                                              self.commands.findEmails.callback
                                              )],
                 states={
-                        self.commands.findEmails.state_point: [
+                        self.commands.findEmails.state_point   : [
                                 MessageHandler(Filters.text & ~Filters.command, self.findEmails)],
+                        self.commands.add_db_Emails.state_point: [
+                                MessageHandler(Filters.text & ~Filters.command, self.add_db_Emails)],
                         },
                 fallbacks=[CommandHandler(self.commands.cancel.command, self.commands.cancel.callback)]
                 )
