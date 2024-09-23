@@ -504,6 +504,42 @@ class TelegramBot:
         ...
         logger.info(f'Stop {self.add_db_Emails.__name__}')
 
+    def command_add_db_Phones(self, update: Update, context):
+        logger.info(f'Start {self.command_add_db_Emails.__name__}')
+        host = os.getenv('DB_HOST')
+        logger.info('Get DB_HOST')
+        port = os.getenv('DB_PORT')
+        logger.info('Get DB_PORT')
+        username = os.getenv('DB_USER')
+        logger.info('Get DB_USER')
+        password = os.getenv('DB_PASSWORD')
+        logger.info('Get DB_PASSWORD')
+        database = os.getenv('DB_DATABASE')
+        logger.info('Get DB_DATABASE')
+        connection = None
+        try:
+            connection = psycopg2.connect(user=username,
+                                          password=password,
+                                          host=host,
+                                          port=port,
+                                          database=database
+                                          )
+
+            cursor = connection.cursor()
+            for phone in self.phones:
+                logger.info(f'will insert {phone}')
+                cursor.execute(f"INSERT INTO Phones (phone) VALUES ('{phone}');")
+            connection.commit()
+            logging.info("Команда успешно выполнена")
+        except (Exception, psycopg2.Error) as error:
+            logging.error(f"Ошибка при работе с PostgreSQL: {error}")
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+                logging.info("Соединение с PostgreSQL закрыто")
+        logger.info(f'Stop {self.command_add_db_Emails.__name__}')
+
     def command_FindPhoneNumbers(self, update: Update, context):
         """
         Бот вывод список найденных номеров телефона
