@@ -701,6 +701,15 @@ class TelegramBot:
                         info.append(user)
                         info.append(application_name)
                         logger.info(info)
+                elif re.compile(r'received replication command').search(line):
+                    logger.info('received replication command')
+                    # logger.info(info)
+                    # logger.info(line)
+                    command = re.compile(r'received replication command:\s([/\s0-9a-zA-Z_-]+)').search(line).groups()
+                    if command:
+                        info.append('command')
+                        info.append(command)
+                        logger.info(info)
                 tpl = tuple(info)
                 if len(tpl) > 2 and tpl not in main_info:
                     main_info.add(tpl)
