@@ -658,7 +658,6 @@ class TelegramBot:
         data = self.getHostInfo(host, port, username, password, command).split('\n')
 
         date = datetime.datetime.now().strftime("%Y-%m-%d")
-        # year, month, day = date.year, date.month, date.day
         main_info = set()
 
         for line in data:
@@ -671,26 +670,33 @@ class TelegramBot:
                 # logger.info(info)
                 # logger.info(line)
                 if re.compile(r'connection received').search(line):
-                    logger.info(info)
-                    logger.info(line)
+                    # logger.info(info)
+                    # logger.info(line)
                     host, port = re.compile(r'host=([0-9:.]+)\sport=([0-9]+)').search(line).groups()
-                    info.append(host)
-                    info.append(port)
-                    logger.info(info)
+                    if host and port:
+                        info.append('received')
+                        info.append(host)
+                        info.append(port)
+                        logger.info(info)
                 elif re.compile(r'connection authenticated').search(line):
-                    logger.info(info)
-                    logger.info(line)
-                    identity, method = re.compile(r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)').search(line).groups()
-                    info.append(identity)
-                    info.append(method)
-                    logger.info(info)
+                    # logger.info(info)
+                    # logger.info(line)
+                    identity, method = re.compile(r'identity="([0-9a-zA-Z_-]+)"\smethod=([0-9a-zA-Z_-]+)').search(line
+                                                                                                                  ).groups()
+                    if identity and method:
+                        info.append('authenticated')
+                        info.append(identity)
+                        info.append(method)
+                        logger.info(info)
                 tpl = tuple(info)
                 if tpl not in main_info:
                     main_info.add(tpl)
             except AttributeError:
                 continue
 
-        self.general_TG_Output(update, context, None, '\n'.join(['SUCCESS']))
+        main_info = list(' '.join(tpl) for tpl in main_info)
+
+        self.general_TG_Output(update, context, None, '\n'.join(main_info))
         logger.info(f'Stop {self.command_GetReplLogs.__name__}')
 
     def command_Echo(self, update: Update, context):
