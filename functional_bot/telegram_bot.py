@@ -865,7 +865,7 @@ class TelegramBot:
                 )
 
         # Обработчик команды /add_db_Emails
-        CommandHandler(self.commands.add_db_Emails.commands,
+        CommandHandler(self.commands.add_db_Emails.command,
                        self.commands.add_db_Emails.callback
                        )
         # dp.add_handler(ConversationHandler(
