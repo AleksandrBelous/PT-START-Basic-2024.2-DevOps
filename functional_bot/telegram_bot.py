@@ -489,6 +489,10 @@ class TelegramBot:
                 logger.info(f'will insert {mail}')
                 cursor.execute(f"INSERT INTO Emails (mail) VALUES ('{mail}');")
             connection.commit()
+            update.message.reply_text(
+                    f'Данные успешно добавлены в БД',
+                    reply_markup=self.keyboard_menu_main()  # Отправляем клавиатуру с кнопками
+                    )
             logging.info("Команда успешно выполнена")
         except (Exception, psycopg2.Error) as error:
             logging.error(f"Ошибка при работе с PostgreSQL: {error}")
