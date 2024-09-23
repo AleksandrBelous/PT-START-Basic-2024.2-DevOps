@@ -521,20 +521,15 @@ class TelegramBot:
         Также вместо ‘8’ на первом месте может быть ‘+7’.
         """
         phoneNumRegex = re.compile(r'(\+7|8)(\s?[(-]?\d{3}[)-]?\s?\d{3}-?\s?\d{2}-?\s?\d{2})')  # формат
-
         phoneNumberList = phoneNumRegex.findall(user_input)  # Ищем номера телефонов
-
         if not phoneNumberList:  # Обрабатываем случай, когда номеров телефонов нет
             update.message.reply_text('Телефонные номера не найдены', reply_markup=self.keyboard_menu_cancel())
             return  # Завершаем выполнение функции
-
         phoneNumbers = '\n'.join(
                 [f'{i + 1}. {phoneNumberList[i][0] + phoneNumberList[i][1]}' for i in range(len(phoneNumberList))]
                 )
-
         update.message.reply_text(phoneNumbers, reply_markup=self.keyboard_menu_cancel()
                                   )  # Отправляем сообщение пользователю
-
         logger.info(f'Stop {self.findPhoneNumbers.__name__}')
         return  # ConversationHandler.END  # Завершаем работу обработчика диалога
 
